@@ -2,7 +2,7 @@ import allure
 import requests
 from services.users.endpoints import Endpoints
 from services.users.payloads import Payloads
-from services.users.models.user_model import UserModel
+from services.users.user_model import UserModel
 from utils.helper import Helper
 
 
