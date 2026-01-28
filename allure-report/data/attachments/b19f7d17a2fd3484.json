@@ -1,0 +1,18 @@
+{
+    "id": "697a1381da2ed128542e34de",
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+    "likes": 123,
+    "link": "",
+    "tags": [
+        "updated",
+        "qa"
+    ],
+    "text": "Updated post text",
+    "publishDate": "2026-01-28T13:47:45.376Z",
+    "updatedDate": "2026-01-28T13:47:45.598Z",
+    "owner": {
+        "id": "697a13810ea5e64cd328e056",
+        "firstName": "Lorraine",
+        "lastName": "Kerr"
+    }
+}
