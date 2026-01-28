@@ -40,7 +40,6 @@ def api_token() -> str:
 * заголовки не нужно повторять в каждом запросе
 *удобно централизованно менять поведение."""
 
-
 @pytest.fixture(scope="session")
 def http(api_token: str) -> requests.Session:
     session = requests.Session()
@@ -52,18 +51,6 @@ def http(api_token: str) -> requests.Session:
     return session
 
 
-#
-@pytest.fixture(scope="session")
-def endpoints(base_url: str) -> Endpoints:
-    return Endpoints(base_url)
-
-
-# Создаёт API-клиент
-@pytest.fixture(scope="session")
-def users_api(http: requests.Session, endpoints: Endpoints) -> UsersAPI:
-    return UsersAPI(session=http, endpoints=endpoints, timeout=DEFAULT_TIMEOUT)
-
-
 @pytest.fixture(autouse=True, scope="session")
 def env_check(http: requests.Session, base_url: str):
     response = http.get(f"{base_url}/user?limit=1", timeout=DEFAULT_TIMEOUT)
@@ -71,6 +58,21 @@ def env_check(http: requests.Session, base_url: str):
 
 
 # ---------- Test data fixtures: create user(s) + auto cleanup ----------
+
+# =======================================================USERS===========================================================
+# =======================================================================================================================
+# =======================================================USERS===========================================================
+
+
+@pytest.fixture(scope="session")
+def endpoints(base_url: str) -> Endpoints:
+    return Endpoints(base_url)
+
+
+@pytest.fixture(scope="session")
+def users_api(http: requests.Session, endpoints: Endpoints) -> UsersAPI:
+    return UsersAPI(session=http, endpoints=endpoints, timeout=DEFAULT_TIMEOUT)
+
 
 @pytest.fixture
 def user_factory(users_api: UsersAPI):
@@ -141,9 +143,9 @@ def created_post(post_factory):
     return post_factory()
 
 
-#======================================================COMMENTS=========================================================
-#=======================================================================================================================
-#======================================================COMMENTS=========================================================
+# ======================================================COMMENTS=========================================================
+# =======================================================================================================================
+# ======================================================COMMENTS=========================================================
 
 
 @pytest.fixture(scope="session")
@@ -185,4 +187,3 @@ def comment_factory(comments_api: CommentsAPI, post_factory, user_factory):
 @pytest.fixture
 def created_comment(comment_factory):
     return comment_factory()
-
