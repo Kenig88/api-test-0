@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "697b7969ca1dc8021639465c",
+            "message": "Auto comment 015e25ae",
+            "owner": {
+                "id": "697b7968ca1dc8692d394656",
+                "firstName": "Paul",
+                "lastName": "Hill"
+            },
+            "post": "697b79699bc56e9f97f4c0a0",
+            "publishDate": "2026-01-29T15:14:49.342Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

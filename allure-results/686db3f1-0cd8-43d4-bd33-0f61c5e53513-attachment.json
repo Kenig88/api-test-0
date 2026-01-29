@@ -1,0 +1,18 @@
+{
+    "id": "697b79799bc56e0c6bf4c133",
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+    "likes": 0,
+    "link": "",
+    "tags": [
+        "qa",
+        "pytest"
+    ],
+    "text": "Auto post 1c2314d6",
+    "publishDate": "2026-01-29T15:15:05.862Z",
+    "updatedDate": "2026-01-29T15:15:05.862Z",
+    "owner": {
+        "id": "697b79799bc56ef5f1f4c12d",
+        "firstName": "Alexandria",
+        "lastName": "Smith"
+    }
+}

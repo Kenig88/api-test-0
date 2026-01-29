@@ -1,0 +1,41 @@
+{
+    "data": [
+        {
+            "id": "697b7988ca1dc840e6394741",
+            "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+            "likes": 0,
+            "tags": [
+                "qa",
+                "pytest"
+            ],
+            "text": "Auto post a436d43f",
+            "publishDate": "2026-01-29T15:15:20.233Z",
+            "updatedDate": "2026-01-29T15:15:20.233Z",
+            "owner": {
+                "id": "697b7987ca1dc8869f39473b",
+                "firstName": "Linda",
+                "lastName": "Warren"
+            }
+        },
+        {
+            "id": "697b79879bc56e1b6df4c1c3",
+            "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+            "likes": 0,
+            "tags": [
+                "qa",
+                "pytest"
+            ],
+            "text": "Auto post 538b269c",
+            "publishDate": "2026-01-29T15:15:19.876Z",
+            "updatedDate": "2026-01-29T15:15:19.876Z",
+            "owner": {
+                "id": "697b7987ca1dc8869f39473b",
+                "firstName": "Linda",
+                "lastName": "Warren"
+            }
+        }
+    ],
+    "total": 2,
+    "page": 0,
+    "limit": 50
+}
