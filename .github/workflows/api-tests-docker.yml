@@ -10,6 +10,7 @@ concurrency:
   group: allure-${{ github.ref }}
   cancel-in-progress: true
 
+
 jobs:
   tests:
     runs-on: ubuntu-latest
