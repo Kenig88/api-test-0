@@ -2,13 +2,7 @@ from typing import Optional, List
 from pydantic import BaseModel, ConfigDict
 
 
-class UserPreviewModel(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    id: str
-    title: Optional[str] = None
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    picture: Optional[str] = None
+from services.common.models import UserPreviewModel
 
 
 class PostPreviewModel(BaseModel):

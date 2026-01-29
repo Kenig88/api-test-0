@@ -9,11 +9,11 @@ class TestComments(BaseTest):
 
     @pytest.mark.regression
     @allure.title("Create new comment")
-    def test_create_comment(self, created_user):
+    def test_create_comment(self, created_user, post_factory, comment_factory):
         user_id, _ = created_user
-        post_id, _ = self.api_posts.create_post(owner_id=user_id)
+        post_id, _ = post_factory(owner_id=user_id)
 
-        comment_id, comment = self.api_comments.create_comment(owner_id=user_id, post_id=post_id)
+        comment_id, comment = comment_factory(owner_id=user_id, post_id=post_id)
         assert comment_id
         assert comment.id == comment_id
 
@@ -23,10 +23,10 @@ class TestComments(BaseTest):
 
     @pytest.mark.regression
     @allure.title("List comments by post contains created comment")
-    def test_list_comments_by_post_contains_created(self, created_user):
+    def test_list_comments_by_post_contains_created(self, created_user, post_factory, comment_factory):
         user_id, _ = created_user
-        post_id, _ = self.api_posts.create_post(owner_id=user_id)
-        comment_id, _ = self.api_comments.create_comment(owner_id=user_id, post_id=post_id)
+        post_id, _ = post_factory(owner_id=user_id)
+        comment_id, _ = comment_factory(owner_id=user_id, post_id=post_id)
 
         comments = self.api_comments.list_comments_by_post(post_id=post_id, limit=50, page=0)
         ids = [c.id for c in comments]
@@ -34,10 +34,10 @@ class TestComments(BaseTest):
 
     @pytest.mark.regression
     @allure.title("Delete comment by id")
-    def test_delete_comment(self, created_user):
+    def test_delete_comment(self, created_user, post_factory, comment_factory):
         user_id, _ = created_user
-        post_id, _ = self.api_posts.create_post(owner_id=user_id)
-        comment_id, _ = self.api_comments.create_comment(owner_id=user_id, post_id=post_id)
+        post_id, _ = post_factory(owner_id=user_id)
+        comment_id, _ = comment_factory(owner_id=user_id, post_id=post_id)
 
         self.api_comments.delete_comment(comment_id)
 

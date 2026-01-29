@@ -15,15 +15,6 @@ class UsersAPI(Helper):
 
     # -------- helpers --------
 
-    def _attach_response_safe(self, response: requests.Response) -> None:
-        try:
-            self.attach_response(response.json())
-        except Exception:
-            allure.attach(
-                body=response.text,
-                name="API Response (text)",
-                attachment_type=allure.attachment_type.TEXT
-            )
 
     # -------- RAW (no asserts) --------
 
@@ -37,7 +28,7 @@ class UsersAPI(Helper):
             json=payload,
             timeout=self.timeout
         )
-        self._attach_response_safe(response)
+        self.attach_response_safe(response)
         return response
 
     @allure.step("GET /user/{user_id} (raw)")
@@ -46,7 +37,7 @@ class UsersAPI(Helper):
             url=self.endpoints.get_user_by_id(user_id),
             timeout=self.timeout
         )
-        self._attach_response_safe(response)
+        self.attach_response_safe(response)
         return response
 
     @allure.step("PUT /user/{user_id} (raw)")
@@ -56,7 +47,7 @@ class UsersAPI(Helper):
             json=payload,
             timeout=self.timeout
         )
-        self._attach_response_safe(response)
+        self.attach_response_safe(response)
         return response
 
     @allure.step("DELETE /user/{user_id} (raw)")
@@ -65,7 +56,7 @@ class UsersAPI(Helper):
             url=self.endpoints.delete_user(user_id),
             timeout=self.timeout
         )
-        self._attach_response_safe(response)
+        self.attach_response_safe(response)
         return response
 
     # -------- CHECKED (Style A: asserts inside) --------

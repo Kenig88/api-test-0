@@ -16,14 +16,15 @@ from services.comments.endpoints import CommentEndpoints
 DEFAULT_TIMEOUT = 15
 
 dotenv_path = Path(__file__).resolve().parents[1] / ".env"
-load_dotenv(dotenv_path=dotenv_path)
+if dotenv_path.exists():
+    load_dotenv(dotenv_path=dotenv_path)
 
 
 # Берёт HOST из .env, гарантирует что он не пустой.
 @pytest.fixture(scope="session")
 def base_url() -> str:
     host = os.getenv("HOST", "").strip().rstrip("/")
-    assert host, f"HOST is not set (dotenv: {dotenv_path})"
+    assert host, f"HOST is not set. Set env var HOST or create {dotenv_path} (see .env)"
     return host
 
 
@@ -31,7 +32,7 @@ def base_url() -> str:
 @pytest.fixture(scope="session")
 def api_token() -> str:
     token = os.getenv("API_TOKEN", "").strip()
-    assert token, f"API_TOKEN is not set (dotenv: {dotenv_path})"
+    assert token, f"API_TOKEN is not set. Set env var API_TOKEN or create {dotenv_path} (see .env)"
     return token
 
 
@@ -39,7 +40,6 @@ def api_token() -> str:
 * соединения переиспользуются (быстрее)
 * заголовки не нужно повторять в каждом запросе
 *удобно централизованно менять поведение."""
-
 @pytest.fixture(scope="session")
 def http(api_token: str) -> requests.Session:
     session = requests.Session()
@@ -48,7 +48,8 @@ def http(api_token: str) -> requests.Session:
         "Accept": "application/json",
         "Content-Type": "application/json",
     })
-    return session
+    yield session
+    session.close()
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -143,9 +144,9 @@ def created_post(post_factory):
     return post_factory()
 
 
-# ======================================================COMMENTS=========================================================
-# =======================================================================================================================
-# ======================================================COMMENTS=========================================================
+#======================================================COMMENTS=========================================================
+#=======================================================================================================================
+#======================================================COMMENTS=========================================================
 
 
 @pytest.fixture(scope="session")
@@ -171,7 +172,7 @@ def comment_factory(comments_api: CommentsAPI, post_factory, user_factory):
         if owner_id is None:
             owner_id, _ = user_factory()
         if post_id is None:
-            # гарантируем post от этого owner (чтобы связи были логичные)
+            # гарантирую post от этого owner (чтобы связи были логичные)
             post_id, _ = post_factory(owner_id=owner_id)
 
         comment_id, comment = comments_api.create_comment(owner_id=owner_id, post_id=post_id)

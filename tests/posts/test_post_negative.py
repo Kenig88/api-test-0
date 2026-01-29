@@ -1,23 +1,8 @@
 import allure
 import pytest
 import requests
-
+from utils.assertions import assert_dummyapi_error
 from config.base_test import BaseTest
-
-
-def assert_dummyapi_error(resp: requests.Response, expected_status: int, expected_error: str):
-    """
-    DummyAPI обычно возвращает JSON вида: {"error": "...", ...}
-    """
-    assert resp.status_code == expected_status, f"{resp.status_code} {resp.text}"
-
-    try:
-        body = resp.json()
-    except Exception as e:
-        raise AssertionError(f"Response is not JSON: {resp.text}") from e
-
-    assert body.get("error") == expected_error, body
-    return body
 
 
 @allure.epic("Administration")

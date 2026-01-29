@@ -1,3 +1,4 @@
+import uuid
 from faker import Faker
 
 fake = Faker()
@@ -7,8 +8,9 @@ class Payloads:
 
     @staticmethod
     def create_user() -> dict:
+        unique_email = f"autotest_{uuid.uuid4().hex}@example.com"
         return {
-            "email": fake.unique.email(),
+            "email": unique_email,
             "firstName": fake.first_name(),
             "lastName": fake.last_name(),
             "dateOfBirth": fake.date_of_birth().isoformat(),

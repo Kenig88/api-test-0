@@ -11,8 +11,7 @@ class Payloads:
         if not owner_id:
             raise ValueError("owner_id is required")
 
-        if text is None:
-            # Post Create: text length 6-50 (preview) :contentReference[oaicite:3]{index=3}
+        if text is None:  # Post Create: text length 6-50 (preview)
             text = f"Auto post {uuid4().hex[:8]}"
 
         if image is None:
@@ -26,7 +25,7 @@ class Payloads:
             "image": image,
             "likes": likes,
             "tags": tags,
-            "owner": owner_id,  # required :contentReference[oaicite:4]{index=4}
+            "owner": owner_id,  # required
         }
 
     @staticmethod

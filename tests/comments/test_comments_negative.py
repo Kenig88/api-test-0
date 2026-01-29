@@ -1,23 +1,11 @@
 import allure
 import pytest
 import requests
+from utils.assertions import assert_dummyapi_error
 
 from config.base_test import BaseTest
 
 
-def assert_dummyapi_error(resp: requests.Response, expected_status: int, expected_error: str):
-    """
-    DummyAPI обычно возвращает JSON вида: {"error": "...", ...}
-    """
-    assert resp.status_code == expected_status, f"{resp.status_code} {resp.text}"
-
-    try:
-        body = resp.json()
-    except Exception as e:
-        raise AssertionError(f"Response is not JSON: {resp.text}") from e
-
-    assert body.get("error") == expected_error, body
-    return body
 
 
 @allure.epic("Administration")
@@ -57,9 +45,9 @@ class TestCommentsNegative(BaseTest):
             assert_dummyapi_error(resp, 403, "APP_ID_NOT_EXIST")
 
     @allure.title("POST /comment/create missing owner -> 400 BODY_NOT_VALID")
-    def test_create_comment_missing_owner(self, created_user):
+    def test_create_comment_missing_owner(self, created_user, post_factory):
         user_id, _ = created_user
-        post_id, _ = self.api_posts.create_post(owner_id=user_id)
+        post_id, _ = post_factory(owner_id=user_id)
 
         with allure.step("Send POST /comment/create missing owner"):
             resp = self.api_comments.create_comment_response(
@@ -102,9 +90,9 @@ class TestCommentsNegative(BaseTest):
             self.api_comments.delete_comment(comment_id, allow_not_found=True)
 
     @allure.title("POST /comment/create with non-existent owner -> 400 BODY_NOT_VALID or 404 RESOURCE_NOT_FOUND")
-    def test_create_comment_owner_not_found(self, created_user):
+    def test_create_comment_owner_not_found(self, created_user, post_factory):
         user_id, _ = created_user
-        post_id, _ = self.api_posts.create_post(owner_id=user_id)
+        post_id, _ = post_factory(owner_id=user_id)
         bad_user_id = "000000000000000000000000"
 
         with allure.step("Send POST /comment/create with non-existent owner"):

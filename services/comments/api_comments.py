@@ -12,51 +12,37 @@ class CommentsAPI(Helper):
         super().__init__()
         self.session = session
         self.endpoints = endpoints
-        self.timeout = timeout
-
-    def _attach_response_safe(self, response: requests.Response) -> None:
-        try:
-            self.attach_response(response.json())
-        except Exception:
-            allure.attach(
-                body=response.text,
-                name="API Response (text)",
-                attachment_type=allure.attachment_type.TEXT
-            )
-
-    # -------- RAW --------
+        self.timeout = timeout  # -------- RAW --------
 
     @allure.step("GET /comment (raw)")
     def list_comments_response(self, limit: int = 10, page: int = 0) -> requests.Response:
         resp = self.session.get(self.endpoints.list_comments, params={"limit": limit, "page": page}, timeout=self.timeout)
-        self._attach_response_safe(resp)
+        self.attach_response_safe(resp)
         return resp
 
     @allure.step("GET /post/{post_id}/comment (raw)")
     def list_comments_by_post_response(self, post_id: str, limit: int = 10, page: int = 0) -> requests.Response:
         resp = self.session.get(self.endpoints.comments_by_post(post_id), params={"limit": limit, "page": page}, timeout=self.timeout)
-        self._attach_response_safe(resp)
+        self.attach_response_safe(resp)
         return resp
 
     @allure.step("GET /user/{user_id}/comment (raw)")
     def list_comments_by_user_response(self, user_id: str, limit: int = 10, page: int = 0) -> requests.Response:
         resp = self.session.get(self.endpoints.comments_by_user(user_id), params={"limit": limit, "page": page}, timeout=self.timeout)
-        self._attach_response_safe(resp)
+        self.attach_response_safe(resp)
         return resp
 
     @allure.step("POST /comment/create (raw)")
     def create_comment_response(self, payload: dict) -> requests.Response:
         resp = self.session.post(self.endpoints.create_comment, json=payload, timeout=self.timeout)
-        self._attach_response_safe(resp)
+        self.attach_response_safe(resp)
         return resp
 
     @allure.step("DELETE /comment/{comment_id} (raw)")
     def delete_comment_response(self, comment_id: str) -> requests.Response:
         resp = self.session.delete(self.endpoints.delete_comment(comment_id), timeout=self.timeout)
-        self._attach_response_safe(resp)
-        return resp
-
-    # -------- CHECKED --------
+        self.attach_response_safe(resp)
+        return resp  # -------- CHECKED --------
 
     @allure.step("Create comment (owner={owner_id}, post={post_id})")
     def create_comment(self, owner_id: str, post_id: str, payload: dict | None = None) -> tuple[str, CommentModel]:
@@ -76,9 +62,7 @@ class CommentsAPI(Helper):
         resp = self.delete_comment_response(comment_id)
 
         if allow_not_found and resp.status_code == 404:
-            return None
-
-        # docs: delete returns string id :contentReference[oaicite:5]{index=5}
+            return None  # docs: delete returns string id
         assert resp.status_code in (200, 204), resp.text
 
         try:

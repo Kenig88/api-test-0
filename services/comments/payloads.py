@@ -14,6 +14,6 @@ class Payloads:
 
         return {
             "message": message,
-            "owner": owner_id,  # required :contentReference[oaicite:3]{index=3}
-            "post": post_id,    # required :contentReference[oaicite:4]{index=4}
+            "owner": owner_id,  # required
+            "post": post_id,  # required
         }
