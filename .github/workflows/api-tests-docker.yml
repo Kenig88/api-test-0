@@ -1,0 +1,95 @@
+name: API tests (pytest) + Allure report
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: allure-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    # Needed to push to gh-pages with GITHUB_TOKEN
+    permissions:
+      contents: write
+
+    env:
+      HOST: ${{ secrets.HOST }}
+      API_TOKEN: ${{ secrets.API_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check required secrets
+        run: |
+          if [ -z "${HOST}" ] || [ -z "${API_TOKEN}" ]; then
+            echo "HOST and API_TOKEN must be set in repository secrets."
+            echo "Settings → Secrets and variables → Actions → New repository secret"
+            exit 1
+          fi
+
+      - name: Choose test markers
+        id: markers
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "expr=smoke" >> "$GITHUB_OUTPUT"
+          else
+            echo "expr=regression" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run tests
+        run: pytest -m "${{ steps.markers.outputs.expr }}" --alluredir=allure-results
+
+      - name: Upload allure-results (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+          retention-days: 14
+
+      - name: Load Allure report history (gh-pages)
+        if: always() && github.event_name != 'pull_request'
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build Allure report (with history)
+        if: always() && github.event_name != 'pull_request'
+        uses: simple-elf/allure-report-action@v1.13
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Deploy report to GitHub Pages
+        if: always() && github.event_name != 'pull_request'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+
+      - name: Report URL
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          echo "Allure report will be available at:"
+          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
