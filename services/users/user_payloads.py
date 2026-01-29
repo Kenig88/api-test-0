@@ -4,7 +4,7 @@ from faker import Faker
 fake = Faker()
 
 
-class Payloads:
+class UserPayloads:
 
     @staticmethod
     def create_user() -> dict:

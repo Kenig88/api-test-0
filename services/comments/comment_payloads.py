@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 
-class Payloads:
+class CommentPayloads:
     @staticmethod
     def create_comment(owner_id: str, post_id: str, message: str | None = None) -> dict:
         if not owner_id:

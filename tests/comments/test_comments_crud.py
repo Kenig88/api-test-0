@@ -6,7 +6,7 @@ from config.base_test import BaseTest
 
 @allure.epic("Administration")
 @allure.feature("Comments")
-@pytest.mark.regression
+@pytest.mark.smoke
 class TestCommentsCRUD(BaseTest):
 
     @allure.title("POST /comment/create -> Create new comment")

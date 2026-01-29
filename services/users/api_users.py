@@ -1,13 +1,13 @@
 import allure
 import requests
-from services.users.endpoints import Endpoints
-from services.users.payloads import Payloads
+from services.users.user_endpoints import UserEndpoints
+from services.users.user_payloads import UserPayloads
 from services.users.user_model import UserModel
 from utils.helper import Helper
 
 
 class UsersAPI(Helper):
-    def __init__(self, session: requests.Session, endpoints: Endpoints, timeout: int = 15):
+    def __init__(self, session: requests.Session, endpoints: UserEndpoints, timeout: int = 15):
         super().__init__()
         self.session = session
         self.endpoints = endpoints
@@ -21,7 +21,7 @@ class UsersAPI(Helper):
     @allure.step("POST /user/create (raw)")
     def create_user_response(self, payload: dict | None = None) -> requests.Response:
         if payload is None:
-            payload = Payloads.create_user()
+            payload = UserPayloads.create_user()
 
         response = self.session.post(
             url=self.endpoints.create_user,

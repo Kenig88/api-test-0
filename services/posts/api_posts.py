@@ -1,8 +1,8 @@
 import allure
 import requests
 
-from services.posts.endpoints import PostEndpoints
-from services.posts.payloads import Payloads
+from services.posts.post_endpoints import PostEndpoints
+from services.posts.post_payloads import PostPayloads
 from services.posts.post_model import PostModel, PostPreviewModel
 from utils.helper import Helper
 
@@ -60,7 +60,7 @@ class PostsAPI(Helper):
     @allure.step("Create post (owner={owner_id})")
     def create_post(self, owner_id: str, payload: dict | None = None) -> tuple[str, PostModel]:
         if payload is None:
-            payload = Payloads.create_post(owner_id)
+            payload = PostPayloads.create_post(owner_id)
 
         resp = self.create_post_response(payload)
         body = resp.json()

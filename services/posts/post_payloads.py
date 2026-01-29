@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 
-class Payloads:
+class PostPayloads:
     @staticmethod
     def create_post(owner_id: str,
                     text: str | None = None,

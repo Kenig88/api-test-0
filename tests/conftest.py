@@ -5,34 +5,34 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from services.users.api_users import UsersAPI
-from services.users.endpoints import Endpoints
+from services.users.user_endpoints import UserEndpoints
 
 from services.posts.api_posts import PostsAPI
-from services.posts.endpoints import PostEndpoints
+from services.posts.post_endpoints import PostEndpoints
 
 from services.comments.api_comments import CommentsAPI
-from services.comments.endpoints import CommentEndpoints
+from services.comments.comment_endpoints import CommentEndpoints
 
 DEFAULT_TIMEOUT = 15
 
-dotenv_path = Path(__file__).resolve().parents[1] / ".env"
+dotenv_path = Path(__file__).resolve().parents[1] / ".env.example"
 if dotenv_path.exists():
     load_dotenv(dotenv_path=dotenv_path)
 
 
-# Берёт HOST из .env, гарантирует что он не пустой.
+# Берёт HOST из .env.example, гарантирует что он не пустой.
 @pytest.fixture(scope="session")
 def base_url() -> str:
     host = os.getenv("HOST", "").strip().rstrip("/")
-    assert host, f"HOST is not set. Set env var HOST or create {dotenv_path} (see .env)"
+    assert host, f"HOST is not set. Set env var HOST or create {dotenv_path} (see .env.example)"
     return host
 
 
-# Берёт API_TOKEN из .env, это app-id для DummyAPI.
+# Берёт API_TOKEN из .env.example, это app-id для DummyAPI.
 @pytest.fixture(scope="session")
 def api_token() -> str:
     token = os.getenv("API_TOKEN", "").strip()
-    assert token, f"API_TOKEN is not set. Set env var API_TOKEN or create {dotenv_path} (see .env)"
+    assert token, f"API_TOKEN is not set. Set env var API_TOKEN or create {dotenv_path} (see .env.example)"
     return token
 
 
@@ -66,12 +66,12 @@ def env_check(http: requests.Session, base_url: str):
 
 
 @pytest.fixture(scope="session")
-def endpoints(base_url: str) -> Endpoints:
-    return Endpoints(base_url)
+def endpoints(base_url: str) -> UserEndpoints:
+    return UserEndpoints(base_url)
 
 
 @pytest.fixture(scope="session")
-def users_api(http: requests.Session, endpoints: Endpoints) -> UsersAPI:
+def users_api(http: requests.Session, endpoints: UserEndpoints) -> UsersAPI:
     return UsersAPI(session=http, endpoints=endpoints, timeout=DEFAULT_TIMEOUT)
 
 

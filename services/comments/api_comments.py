@@ -1,8 +1,8 @@
 import allure
 import requests
 
-from services.comments.endpoints import CommentEndpoints
-from services.comments.payloads import Payloads
+from services.comments.comment_endpoints import CommentEndpoints
+from services.comments.comment_payloads import CommentPayloads
 from services.comments.comments_model import CommentModel, CommentPreviewModel
 from utils.helper import Helper
 
@@ -47,7 +47,7 @@ class CommentsAPI(Helper):
     @allure.step("Create comment (owner={owner_id}, post={post_id})")
     def create_comment(self, owner_id: str, post_id: str, payload: dict | None = None) -> tuple[str, CommentModel]:
         if payload is None:
-            payload = Payloads.create_comment(owner_id=owner_id, post_id=post_id)
+            payload = CommentPayloads.create_comment(owner_id=owner_id, post_id=post_id)
 
         resp = self.create_comment_response(payload)
         body = resp.json()

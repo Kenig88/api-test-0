@@ -6,7 +6,7 @@ from config.base_test import BaseTest
 
 @allure.epic("Administration")
 @allure.feature("Posts")
-@pytest.mark.regression
+@pytest.mark.smoke
 class TestPostsCRUD(BaseTest):
 
     @allure.title("POST /post/create -> Create new post")

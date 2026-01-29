@@ -5,9 +5,9 @@ import allure
 
 @allure.epic("Administration")
 @allure.feature("Users")
+@pytest.mark.smoke
 class TestUsers(BaseTest):
 
-    @pytest.mark.smoke
     @allure.title("User CRUD (POST -> GET -> PUT -> GET -> DELETE -> GET 404) happy path")
     def test_user_crud(self, user_factory):
 

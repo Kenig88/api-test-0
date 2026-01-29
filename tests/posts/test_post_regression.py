@@ -1,7 +1,7 @@
 import allure
 import pytest
 from config.base_test import BaseTest
-from services.posts.payloads import Payloads
+from services.posts.post_payloads import PostPayloads
 
 
 @allure.epic("Administration")
@@ -35,7 +35,7 @@ class TestPosts(BaseTest):
         user_id, _ = created_user
         post_id, created = self.api_posts.create_post(owner_id=user_id)
 
-        update_payload = Payloads.update_post(
+        update_payload = PostPayloads.update_post(
             text="Updated post text",
             likes=123,
             tags=["updated", "qa"]
