@@ -8,7 +8,7 @@ on:
         type: choice
         required: true
         default: all
-        options: [regression, negative, smoke, all, custom]
+        options: [all, all_marked, regression, negative, smoke, custom]
       markers:
         description: "Custom pytest -m expression (used only if suite=custom)"
         type: string
@@ -48,15 +48,15 @@ jobs:
           CUSTOM: ${{ inputs.markers }}
         run: |
           case "$SUITE" in
-            all)    MARKERS='smoke or regression or negative' ;;
-            custom) MARKERS="$CUSTOM" ;;
-            *)      MARKERS="$SUITE" ;;
+            all)        MARKERS='' ;;
+            all_marked) MARKERS='smoke or regression or negative' ;;
+            custom)     MARKERS="$CUSTOM" ;;
+            *)          MARKERS="$SUITE" ;;
           esac
 
           echo "Selected suite: $SUITE"
-          echo "Pytest -m expression: $MARKERS"
+          echo "Pytest -m expression: ${MARKERS:-<none>}"
 
-          # validate only for custom
           if [ "$SUITE" = "custom" ]; then
             test -n "$MARKERS" || { echo "inputs.markers is empty"; exit 1; }
             echo "$MARKERS" | grep -Eq '^[A-Za-z0-9_()[:space:]]+$' || {
@@ -65,15 +65,15 @@ jobs:
             }
           fi
 
-          echo "=== Collect-only (what would run) ==="
-          pytest -m "$MARKERS" --collect-only -q | sed -n '1,60p'
-          echo "Collected count:"
-          pytest -m "$MARKERS" --collect-only -q | wc -l
+          if [ -z "$MARKERS" ]; then
+            echo "Running ALL tests (no -m)"
+            pytest --alluredir=allure-results --clean-alluredir
+          else
+            echo "Running pytest with -m: $MARKERS"
+            pytest -m "$MARKERS" --alluredir=allure-results --clean-alluredir
+          fi
 
-          echo "=== Run ==="
-          pytest -m "$MARKERS" --alluredir=allure-results --clean-alluredir
-
-          echo "=== Allure produced test results ==="
+          echo "Allure produced test results:"
           find allure-results -name '*-result.json' -type f | wc -l
 
       - name: Checkout gh-pages (for Allure history)
@@ -105,6 +105,8 @@ jobs:
       - name: Report URL
         if: always()
         run: |
-          URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-          echo "Allure report: $URL"
-          echo "Allure report: $URL" >> "$GITHUB_STEP_SUMMARY"
+          BASE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          RUN_URL="${BASE}${{ github.run_number }}/"
+          echo "Allure report (this run): $RUN_URL"
+          echo "Allure report (this run): $RUN_URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "Allure report (base): $BASE" >> "$GITHUB_STEP_SUMMARY"
