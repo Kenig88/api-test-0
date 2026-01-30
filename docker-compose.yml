@@ -1,0 +1,42 @@
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Required in .env:
+    #   HOST=https://dummyapi.io/data/v1
+    #   API_TOKEN=...
+    env_file:
+      - .env
+    environment:
+      PYTEST_MARKS: ${PYTEST_MARKS:-smoke}
+      PYTEST_EXTRA_ARGS: ${PYTEST_EXTRA_ARGS:-}
+    volumes:
+      - ./allure-results:/app/allure-results
+    command: >
+      bash -lc 'pytest -m "${PYTEST_MARKS:-smoke}" -sv --alluredir=allure-results ${PYTEST_EXTRA_ARGS:-}'
+
+  allure:
+    # Pinned tag for reproducible builds (change if you need a newer version)
+    image: frankescobar/allure-docker-service:2.35.1
+    # Watches /app/allure-results and regenerates reports automatically
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 1
+      KEEP_HISTORY: 1
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-report:/app/default-reports
+
+  # Optional: a "friendly" UI for the Allure Docker Service.
+  # (Docs/example usage for UI container) :contentReference[oaicite:1]{index=1}
+  # allure-ui:
+  #   image: frankescobar/allure-docker-service-ui:7.0.3
+  #   environment:
+  #     ALLURE_DOCKER_PUBLIC_API_URL: "http://allure:5050"
+  #     ALLURE_DOCKER_PUBLIC_API_URL_PREFIX: ""
+  #   ports:
+  #     - "5252:5252"
+  #   depends_on:
+  #     - allure

@@ -2,16 +2,12 @@ import allure
 import pytest
 import requests
 from utils.assertions import assert_dummyapi_error
-
 from config.base_test import BaseTest
-
-
 
 
 @allure.epic("Administration")
 @allure.feature("Comments")
 @pytest.mark.negative
-@pytest.mark.regression
 class TestCommentsNegative(BaseTest):
 
     @allure.title("POST /comment/create without app-id -> 403 APP_ID_MISSING")

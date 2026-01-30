@@ -8,7 +8,6 @@ from config.base_test import BaseTest
 @allure.epic("Administration")
 @allure.feature("Posts")
 @pytest.mark.negative
-@pytest.mark.regression
 class TestPostsNegative(BaseTest):
 
     @allure.title("POST /post/create without app-id -> 403 APP_ID_MISSING")

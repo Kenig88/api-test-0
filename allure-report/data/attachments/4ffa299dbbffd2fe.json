@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "697ba107f2ab0e8fdfa6f0d0",
+            "message": "Auto comment 5697443b",
+            "owner": {
+                "id": "697ba107950a000c7c339557",
+                "firstName": "Lindsay",
+                "lastName": "Burgess"
+            },
+            "post": "697ba1078c520545adfd1fe7",
+            "publishDate": "2026-01-29T18:03:51.895Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

@@ -8,7 +8,6 @@ from utils.assertions import assert_dummyapi_error
 @allure.epic("Administration")
 @allure.feature("Users")
 @pytest.mark.negative
-@pytest.mark.regression
 class TestUsersNegative(BaseTest):
 
     @allure.title("GET without app-id -> 403 APP_ID_MISSING")

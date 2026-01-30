@@ -1,0 +1,18 @@
+{
+    "id": "697ba1639d8f3dd5e4902aad",
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+    "likes": 0,
+    "link": "",
+    "tags": [
+        "qa",
+        "pytest"
+    ],
+    "text": "Auto post a830ad48",
+    "publishDate": "2026-01-29T18:05:23.481Z",
+    "updatedDate": "2026-01-29T18:05:23.481Z",
+    "owner": {
+        "id": "697ba162e32e9360ab8fd72a",
+        "firstName": "Carl",
+        "lastName": "Zhang"
+    }
+}

@@ -15,24 +15,24 @@ from services.comments.comment_endpoints import CommentEndpoints
 
 DEFAULT_TIMEOUT = 15
 
-dotenv_path = Path(__file__).resolve().parents[1] / ".env.example"
+dotenv_path = Path(__file__).resolve().parents[1] / ".env"
 if dotenv_path.exists():
     load_dotenv(dotenv_path=dotenv_path)
 
 
-# Берёт HOST из .env.example, гарантирует что он не пустой.
+# Берёт HOST из .env, гарантирует что он не пустой.
 @pytest.fixture(scope="session")
 def base_url() -> str:
     host = os.getenv("HOST", "").strip().rstrip("/")
-    assert host, f"HOST is not set. Set env var HOST or create {dotenv_path} (see .env.example)"
+    assert host, f"HOST is not set. Set env var HOST or create {dotenv_path} (see .env)"
     return host
 
 
-# Берёт API_TOKEN из .env.example, это app-id для DummyAPI.
+# Берёт API_TOKEN из .env, это app-id для DummyAPI.
 @pytest.fixture(scope="session")
 def api_token() -> str:
     token = os.getenv("API_TOKEN", "").strip()
-    assert token, f"API_TOKEN is not set. Set env var API_TOKEN or create {dotenv_path} (see .env.example)"
+    assert token, f"API_TOKEN is not set. Set env var API_TOKEN or create {dotenv_path} (see .env)"
     return token
 
 

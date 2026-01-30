@@ -1,6 +1,5 @@
 import allure
 import pytest
-
 from config.base_test import BaseTest
 
 

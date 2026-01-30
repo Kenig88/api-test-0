@@ -1,0 +1,18 @@
+{
+    "id": "697ba247cc8c52199fcf3fa5",
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+    "likes": 123,
+    "link": "",
+    "tags": [
+        "updated",
+        "qa"
+    ],
+    "text": "Updated post text",
+    "publishDate": "2026-01-29T18:09:11.308Z",
+    "updatedDate": "2026-01-29T18:09:11.726Z",
+    "owner": {
+        "id": "697ba246f0b1632f1d9dc047",
+        "firstName": "Ann",
+        "lastName": "Estrada"
+    }
+}

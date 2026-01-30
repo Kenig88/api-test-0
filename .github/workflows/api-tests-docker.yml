@@ -1,60 +1,70 @@
-name: API tests (pytest) + Allure report
+name: API tests
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: [main, master]
   pull_request:
   workflow_dispatch:
+    inputs:
+      markers:
+        description: "Pytest -m expression (e.g. smoke and not negative, regression or negative, (smoke or negative) and not regression)"
+        type: string
+        required: true
+        default: "regression"
 
 concurrency:
-  group: allure-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
 
 jobs:
   tests:
     runs-on: ubuntu-latest
-
-    # Needed to push to gh-pages with GITHUB_TOKEN
-    permissions:
-      contents: write
-
     env:
       HOST: ${{ secrets.HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
+      PYTEST_MARKERS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.markers || github.event_name == 'pull_request' && 'smoke' || 'regression' }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Check required secrets
+        run: |
+          test -n "$HOST" -a -n "$API_TOKEN" || {
+            echo "HOST and API_TOKEN must be set in repository secrets."
+            echo "Settings → Secrets and variables → Actions → New repository secret"
+            exit 1
+          }
+
+      - name: Validate marker expression (manual runs)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          expr="$PYTEST_MARKERS"
+          if [ -z "$expr" ]; then
+            echo "Marker expression is empty."
+            exit 1
+          fi
+          # allow only: letters/digits/underscore/spaces/parentheses
+          if ! echo "$expr" | grep -Eq '^[A-Za-z0-9_()[:space:]]+$'; then
+            echo "Invalid marker expression: '$expr'"
+            echo "Allowed chars: A-Z a-z 0-9 _ space ( )"
+            echo "Use words: and / or / not (e.g. 'smoke and not negative')"
+            exit 1
+          fi
+
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Check required secrets
-        run: |
-          if [ -z "${HOST}" ] || [ -z "${API_TOKEN}" ]; then
-            echo "HOST and API_TOKEN must be set in repository secrets."
-            echo "Settings → Secrets and variables → Actions → New repository secret"
-            exit 1
-          fi
-
-      - name: Choose test markers
-        id: markers
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "expr=smoke" >> "$GITHUB_OUTPUT"
-          else
-            echo "expr=regression" >> "$GITHUB_OUTPUT"
-          fi
+      - run: pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest -m "${{ steps.markers.outputs.expr }}" --alluredir=allure-results
+        run: |
+          echo "Running pytest with -m: $PYTEST_MARKERS"
+          pytest -m "$PYTEST_MARKERS" --alluredir=allure-results
 
       - name: Upload allure-results (artifact)
         if: always()
@@ -63,14 +73,19 @@ jobs:
           name: allure-results
           path: allure-results
           retention-days: 14
+          if-no-files-found: ignore
 
-      - name: Load Allure report history (gh-pages)
+      - name: Checkout gh-pages (for Allure history)
         if: always() && github.event_name != 'pull_request'
         continue-on-error: true
         uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages
+
+      - name: Ensure gh-pages dir exists
+        if: always() && github.event_name != 'pull_request'
+        run: mkdir -p gh-pages
 
       - name: Build Allure report (with history)
         if: always() && github.event_name != 'pull_request'
@@ -83,7 +98,7 @@ jobs:
 
       - name: Deploy report to GitHub Pages
         if: always() && github.event_name != 'pull_request'
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
@@ -92,5 +107,106 @@ jobs:
       - name: Report URL
         if: always() && github.event_name != 'pull_request'
         run: |
-          echo "Allure report will be available at:"
-          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          echo "Allure report: $URL"
+          echo "Allure report: $URL" >> "$GITHUB_STEP_SUMMARY"
+
+
+
+
+#name: API tests
+#
+#on:
+#  push:
+#    branches: ["main", "master"]
+#  pull_request:
+#  workflow_dispatch:
+#
+#concurrency:
+#  group: allure-${{ github.ref }}
+#  cancel-in-progress: true
+#
+#
+#jobs:
+#  tests:
+#    runs-on: ubuntu-latest
+#
+#    # Needed to push to gh-pages with GITHUB_TOKEN
+#    permissions:
+#      contents: write
+#
+#    env:
+#      HOST: ${{ secrets.HOST }}
+#      API_TOKEN: ${{ secrets.API_TOKEN }}
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Set up Python
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: "3.12"
+#          cache: pip
+#
+#      - name: Install dependencies
+#        run: pip install -r requirements.txt
+#
+#      - name: Check required secrets
+#        run: |
+#          if [ -z "${HOST}" ] || [ -z "${API_TOKEN}" ]; then
+#            echo "HOST and API_TOKEN must be set in repository secrets."
+#            echo "Settings → Secrets and variables → Actions → New repository secret"
+#            exit 1
+#          fi
+#
+#      - name: Choose test markers
+#        id: markers
+#        run: |
+#          if [ "${{ github.event_name }}" = "pull_request" ]; then
+#            echo "expr=smoke" >> "$GITHUB_OUTPUT"
+#          else
+#            echo "expr=regression" >> "$GITHUB_OUTPUT"
+#          fi
+#
+#      - name: Run tests
+#        run: pytest -m "${{ steps.markers.outputs.expr }}" --alluredir=allure-results
+#
+#      - name: Upload allure-results (artifact)
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-results
+#          path: allure-results
+#          retention-days: 14
+#
+#      - name: Load Allure report history (gh-pages)
+#        if: always() && github.event_name != 'pull_request'
+#        continue-on-error: true
+#        uses: actions/checkout@v4
+#        with:
+#          ref: gh-pages
+#          path: gh-pages
+#
+#      - name: Build Allure report (with history)
+#        if: always() && github.event_name != 'pull_request'
+#        uses: simple-elf/allure-report-action@v1.13
+#        with:
+#          allure_results: allure-results
+#          gh_pages: gh-pages
+#          allure_report: allure-report
+#          allure_history: allure-history
+#
+#      - name: Deploy report to GitHub Pages
+#        if: always() && github.event_name != 'pull_request'
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_branch: gh-pages
+#          publish_dir: allure-history
+#
+#      - name: Report URL
+#        if: always() && github.event_name != 'pull_request'
+#        run: |
+#          echo "Allure report will be available at:"
+#          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
