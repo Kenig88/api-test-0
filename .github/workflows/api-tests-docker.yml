@@ -8,12 +8,7 @@ on:
         type: choice
         required: true
         default: all
-        options:
-          - regression
-          - negative
-          - smoke
-          - all
-          - custom
+        options: [regression, negative, smoke, all, custom]
       markers:
         description: "Custom pytest -m expression (used only if suite=custom)"
         type: string
@@ -33,35 +28,12 @@ jobs:
     env:
       HOST: ${{ secrets.HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
-      PYTEST_MARKERS: >-
-        ${{ github.event.inputs.suite == 'custom' && github.event.inputs.markers
-            || github.event.inputs.suite == 'all' && 'smoke or regression or negative'
-            || github.event.inputs.suite }}
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Check required secrets
-        run: |
-          test -n "$HOST" -a -n "$API_TOKEN" || {
-            echo "HOST and API_TOKEN must be set in repository secrets."
-            exit 1
-          }
-
-      - name: Validate marker expression
-        run: |
-          expr="$PYTEST_MARKERS"
-          if [ -z "$expr" ]; then
-            echo "Marker expression is empty."
-            echo "If suite=custom, set inputs.markers."
-            exit 1
-          fi
-          if ! echo "$expr" | grep -Eq '^[A-Za-z0-9_()[:space:]]+$'; then
-            echo "Invalid marker expression: '$expr'"
-            echo "Allowed chars: A-Z a-z 0-9 _ space ( )"
-            echo "Use words: and / or / not"
-            exit 1
-          fi
+        run: test -n "$HOST" -a -n "$API_TOKEN"
 
       - uses: actions/setup-python@v5
         with:
@@ -71,30 +43,36 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: Run tests
+        env:
+          SUITE: ${{ inputs.suite }}
+          CUSTOM: ${{ inputs.markers }}
         run: |
-          echo "Running pytest with -m: $PYTEST_MARKERS"
-          pytest -m "$PYTEST_MARKERS" --alluredir=allure-results --clean-alluredir
+          case "$SUITE" in
+            all)    MARKERS='smoke or regression or negative' ;;
+            custom) MARKERS="$CUSTOM" ;;
+            *)      MARKERS="$SUITE" ;;
+          esac
 
-      - name: Upload allure-results (artifact)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: allure-results
-          retention-days: 14
-          if-no-files-found: ignore
+          # validate only for custom
+          if [ "$SUITE" = "custom" ]; then
+            test -n "$MARKERS" || { echo "inputs.markers is empty"; exit 1; }
+            echo "$MARKERS" | grep -Eq '^[A-Za-z0-9_()[:space:]]+$' || {
+              echo "Invalid marker expression: '$MARKERS'"
+              exit 1
+            }
+          fi
+
+          echo "Running pytest with -m: $MARKERS"
+          pytest -m "$MARKERS" --alluredir=allure-results --clean-alluredir
 
       - name: Checkout gh-pages (for Allure history)
-        if: always()
         continue-on-error: true
         uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages
 
-      - name: Ensure gh-pages dir exists
-        if: always()
-        run: mkdir -p gh-pages
+      - run: mkdir -p gh-pages
 
       - name: Build Allure report (with history)
         if: always()
@@ -119,3 +97,128 @@ jobs:
           URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
           echo "Allure report: $URL"
           echo "Allure report: $URL" >> "$GITHUB_STEP_SUMMARY"
+
+
+
+
+#name: API tests
+#
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      suite:
+#        description: "Test suite"
+#        type: choice
+#        required: true
+#        default: all
+#        options:
+#          - regression
+#          - negative
+#          - smoke
+#          - all
+#          - custom
+#      markers:
+#        description: "Custom pytest -m expression (used only if suite=custom)"
+#        type: string
+#        required: false
+#        default: ""
+#
+#concurrency:
+#  group: ${{ github.workflow }}-${{ github.ref }}
+#  cancel-in-progress: true
+#
+#permissions:
+#  contents: write
+#
+#jobs:
+#  tests:
+#    runs-on: ubuntu-latest
+#    env:
+#      HOST: ${{ secrets.HOST }}
+#      API_TOKEN: ${{ secrets.API_TOKEN }}
+#      PYTEST_MARKERS: >-
+#        ${{ github.event.inputs.suite == 'custom' && github.event.inputs.markers
+#            || github.event.inputs.suite == 'all' && 'smoke or regression or negative'
+#            || github.event.inputs.suite }}
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Check required secrets
+#        run: |
+#          test -n "$HOST" -a -n "$API_TOKEN" || {
+#            echo "HOST and API_TOKEN must be set in repository secrets."
+#            exit 1
+#          }
+#
+#      - name: Validate marker expression
+#        run: |
+#          expr="$PYTEST_MARKERS"
+#          if [ -z "$expr" ]; then
+#            echo "Marker expression is empty."
+#            echo "If suite=custom, set inputs.markers."
+#            exit 1
+#          fi
+#          if ! echo "$expr" | grep -Eq '^[A-Za-z0-9_()[:space:]]+$'; then
+#            echo "Invalid marker expression: '$expr'"
+#            echo "Allowed chars: A-Z a-z 0-9 _ space ( )"
+#            echo "Use words: and / or / not"
+#            exit 1
+#          fi
+#
+#      - uses: actions/setup-python@v5
+#        with:
+#          python-version: "3.12"
+#          cache: pip
+#
+#      - run: pip install -r requirements.txt
+#
+#      - name: Run tests
+#        run: |
+#          echo "Running pytest with -m: $PYTEST_MARKERS"
+#          pytest -m "$PYTEST_MARKERS" --alluredir=allure-results --clean-alluredir
+#
+#      - name: Upload allure-results (artifact)
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-results
+#          path: allure-results
+#          retention-days: 14
+#          if-no-files-found: ignore
+#
+#      - name: Checkout gh-pages (for Allure history)
+#        if: always()
+#        continue-on-error: true
+#        uses: actions/checkout@v4
+#        with:
+#          ref: gh-pages
+#          path: gh-pages
+#
+#      - name: Ensure gh-pages dir exists
+#        if: always()
+#        run: mkdir -p gh-pages
+#
+#      - name: Build Allure report (with history)
+#        if: always()
+#        uses: simple-elf/allure-report-action@v1.13
+#        with:
+#          allure_results: allure-results
+#          gh_pages: gh-pages
+#          allure_report: allure-report
+#          allure_history: allure-history
+#
+#      - name: Deploy report to GitHub Pages
+#        if: always()
+#        uses: peaceiris/actions-gh-pages@v4
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_branch: gh-pages
+#          publish_dir: allure-history
+#
+#      - name: Report URL
+#        if: always()
+#        run: |
+#          URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+#          echo "Allure report: $URL"
+#          echo "Allure report: $URL" >> "$GITHUB_STEP_SUMMARY"
