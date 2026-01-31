@@ -94,17 +94,27 @@ jobs:
         run: |
           test -d allure-history || { echo "allure-history not found"; exit 1; }
 
-          # Fix possible read-only file from previous content
-          rm -f allure-history/index.html || true
-          chmod -R u+rwX allure-history || true
-
-          cat > allure-history/index.html <<HTML
+          tmp="$(mktemp)"
+          cat > "$tmp" <<HTML
           <!doctype html>
           <meta charset="utf-8">
           <meta http-equiv="refresh" content="0; url=./${{ github.run_number }}/">
           <title>Allure Report</title>
           <p>Redirecting to latest report...</p>
           HTML
+
+          # Try to overwrite root index.html
+          rm -f allure-history/index.html 2>/dev/null || true
+          cp -f "$tmp" allure-history/index.html 2>/dev/null || true
+
+          # If root is still not writable, at least ensure the run folder exists
+          mkdir -p "allure-history/${{ github.run_number }}" || true
+          cp -f "$tmp" "allure-history/${{ github.run_number }}/index.html" || true
+
+          echo "Wrote redirect to:"
+          ls -la allure-history/index.html 2>/dev/null || echo "root index.html NOT writable"
+          ls -la "allure-history/${{ github.run_number }}/index.html" 2>/dev/null || echo "run index.html NOT written"
+
 
 
       - name: Deploy report to GitHub Pages
