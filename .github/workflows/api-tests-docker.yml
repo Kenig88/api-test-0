@@ -8,7 +8,7 @@ on:
         type: choice
         required: true
         default: all
-        options: [all, all_marked, regression, negative, smoke, custom]
+        options: [ all, all_marked, regression, negative, smoke, custom ]
       markers:
         description: "Custom pytest -m expression (used only if suite=custom)"
         type: string
@@ -54,15 +54,9 @@ jobs:
             *)          MARKERS="$SUITE" ;;
           esac
 
-          echo "Selected suite: $SUITE"
-          echo "Pytest -m expression: ${MARKERS:-<none>}"
-
           if [ "$SUITE" = "custom" ]; then
             test -n "$MARKERS" || { echo "inputs.markers is empty"; exit 1; }
-            echo "$MARKERS" | grep -Eq '^[A-Za-z0-9_()[:space:]]+$' || {
-              echo "Invalid marker expression: '$MARKERS'"
-              exit 1
-            }
+            echo "$MARKERS" | grep -Eq '^[A-Za-z0-9_()[:space:]]+$' || { echo "Invalid marker expression"; exit 1; }
           fi
 
           if [ -z "$MARKERS" ]; then
@@ -73,8 +67,6 @@ jobs:
             pytest -m "$MARKERS" --alluredir=allure-results --clean-alluredir
           fi
 
-          echo "Allure produced test results:"
-          find allure-results -name '*-result.json' -type f | wc -l
 
       - name: Checkout gh-pages (for Allure history)
         continue-on-error: true
@@ -94,6 +86,29 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
+      - name: Make root redirect to latest run
+        if: always()
+        run: |
+          cat > allure-history/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=./${{ github.run_number }}/">
+          <title>Allure Report</title>
+          <p>Redirecting to latest report...</p>
+          HTML
+
+      - name: Make root redirect to latest run
+        if: always()
+        run: |
+          cat > allure-history/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=./${{ github.run_number }}/">
+          <title>Allure Report</title>
+          <p>Redirecting to latest report...</p>
+          HTML
+
+
       - name: Deploy report to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v4
@@ -109,4 +124,5 @@ jobs:
           RUN_URL="${BASE}${{ github.run_number }}/"
           echo "Allure report (this run): $RUN_URL"
           echo "Allure report (this run): $RUN_URL" >> "$GITHUB_STEP_SUMMARY"
-          echo "Allure report (base): $BASE" >> "$GITHUB_STEP_SUMMARY"
+
+
