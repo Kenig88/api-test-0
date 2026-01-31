@@ -20,6 +20,8 @@ x-base: &base
     # В тестах используется APP_ID (это заголовок app-id для DummyAPI).
     # Значение берём из API_TOKEN на хосте (как ты настроил).
     APP_ID: ${API_TOKEN:?API_TOKEN is required}
+    API_TOKEN: ${API_TOKEN:?API_TOKEN is required}
+
 
 services:
 
