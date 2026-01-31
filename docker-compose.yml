@@ -1,0 +1,7 @@
+services:
+  api-tests:
+    build: .
+    env_file:
+      - .env
+    command: ["pytest", "-q"]
+    working_dir: /app
