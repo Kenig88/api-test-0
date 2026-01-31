@@ -99,6 +99,25 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
+      - name: Make root redirect to latest run
+        if: always()
+        run: |
+          # На всякий случай убеждаемся, что папка опубликованных файлов существует
+          test -d allure-history || { echo "allure-history not found"; exit 0; }
+
+          # Создаём редирект в корне Pages на текущий run_number
+          cat > allure-history/index.html <<HTML
+          <!doctype html>
+          <meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=./${{ github.run_number }}/">
+          <title>Allure Report</title>
+          <p>Redirecting to latest report...</p>
+          HTML
+
+          # И на всякий случай кладём .nojekyll в корень, чтобы GitHub Pages не ломал Allure
+          touch allure-history/.nojekyll || true
+
+
       # Публикуем получившуюся папку allure-history в ветку gh-pages.
       # GitHub Pages настроен как "Deploy from a branch" → gh-pages.
       - name: Deploy report to GitHub Pages
@@ -116,8 +135,16 @@ jobs:
         if: always()
         run: |
           BASE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-          echo "Allure report: $BASE"
-          echo "Allure report: $BASE" >> "$GITHUB_STEP_SUMMARY"
+          RUN_URL="${BASE}${{ github.run_number }}/"
+
+          echo "Allure report (latest): $BASE"
+          echo "Allure report (this run): $RUN_URL"
+
+          {
+            echo "Allure report (latest): $BASE"
+            echo "Allure report (this run): $RUN_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
+
 
 
 
