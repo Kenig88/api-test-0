@@ -8,12 +8,7 @@ on:
         type: choice
         required: true
         default: all
-        options: [all, all_marked, regression, negative, smoke, custom]
-      markers:
-        description: "Custom pytest -m expression (used only if suite=custom)"
-        type: string
-        required: false
-        default: ""
+        options: [all, regression, negative, smoke]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -45,26 +40,13 @@ jobs:
       - name: Run tests
         env:
           SUITE: ${{ inputs.suite }}
-          CUSTOM: ${{ inputs.markers }}
         run: |
-          case "$SUITE" in
-            all)        MARKERS='' ;;
-            all_marked) MARKERS='smoke or regression or negative' ;;
-            custom)     MARKERS="$CUSTOM" ;;
-            *)          MARKERS="$SUITE" ;;
-          esac
-
-          if [ "$SUITE" = "custom" ]; then
-            test -n "$MARKERS" || { echo "inputs.markers is empty"; exit 1; }
-            echo "$MARKERS" | grep -Eq '^[A-Za-z0-9_()[:space:]]+$' || { echo "Invalid marker expression"; exit 1; }
-          fi
-
-          if [ -z "$MARKERS" ]; then
+          if [ "$SUITE" = "all" ]; then
             echo "Running ALL tests (no -m)"
             pytest --alluredir=allure-results --clean-alluredir
           else
-            echo "Running pytest with -m: $MARKERS"
-            pytest -m "$MARKERS" --alluredir=allure-results --clean-alluredir
+            echo "Running pytest with -m: $SUITE"
+            pytest -m "$SUITE" --alluredir=allure-results --clean-alluredir
           fi
 
       - name: Checkout gh-pages (for Allure history)
@@ -80,7 +62,6 @@ jobs:
         run: mkdir -p gh-pages
 
       - name: Build Allure report (with history)
-        id: build
         if: success() || failure()
         uses: simple-elf/allure-report-action@v1.13
         with:
@@ -92,7 +73,7 @@ jobs:
       - name: Make root redirect to latest run
         if: always()
         run: |
-          test -d allure-history || { echo "allure-history not found"; exit 1; }
+          test -d allure-history || { echo "allure-history not found"; exit 0; }
 
           tmp="$(mktemp)"
           cat > "$tmp" <<HTML
@@ -103,18 +84,13 @@ jobs:
           <p>Redirecting to latest report...</p>
           HTML
 
-          # Try to overwrite root index.html
+          # пытаемся записать в корень (может быть read-only — тогда просто не упадём)
           rm -f allure-history/index.html 2>/dev/null || true
           cp -f "$tmp" allure-history/index.html 2>/dev/null || true
 
-          # If root is still not writable, at least ensure the run folder exists
-          mkdir -p "allure-history/${{ github.run_number }}" || true
-          cp -f "$tmp" "allure-history/${{ github.run_number }}/index.html" || true
-
-          echo "Wrote redirect to:"
-          ls -la allure-history/index.html 2>/dev/null || echo "root index.html NOT writable"
-          ls -la "allure-history/${{ github.run_number }}/index.html" 2>/dev/null || echo "run index.html NOT written"
-
+          # минимум: гарантируем, что ссылка на /<run_number>/ точно рабочая
+          mkdir -p "allure-history/${{ github.run_number }}" 2>/dev/null || true
+          cp -f "$tmp" "allure-history/${{ github.run_number }}/index.html" 2>/dev/null || true
 
 
       - name: Deploy report to GitHub Pages
