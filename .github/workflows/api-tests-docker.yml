@@ -1,5 +1,8 @@
 name: API tests
 
+# Когда запускается workflow:
+# workflow_dispatch = вручную из вкладки Actions → Run workflow
+# Мы даём пользователю выбрать, какой набор тестов запускать (suite)
 on:
   workflow_dispatch:
     inputs:
@@ -8,38 +11,65 @@ on:
         type: choice
         required: true
         default: all
+        # Эти значения должны совпадать с именами сервисов в docker-compose.yml
         options: [all, regression, negative, smoke]
 
+# Защита от одновременных запусков одного и того же workflow на одной ветке/коммите.
+# Если кто-то запустил ещё раз — предыдущий запуск будет отменён.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Права, которые нужны этому workflow.
+# contents: write требуется, потому что мы пушим отчёт в ветку gh-pages.
 permissions:
   contents: write
 
 jobs:
   tests:
+    # GitHub поднимает чистую Ubuntu-машину для выполнения шагов
     runs-on: ubuntu-latest
+
+    # Переменные окружения для всех шагов job’а.
+    # secrets.* — это секреты репозитория (Settings → Secrets and variables → Actions).
     env:
       HOST: ${{ secrets.HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
 
     steps:
+      # Скачиваем код репозитория на runner (без этого нечего билдить/запускать)
       - uses: actions/checkout@v4
 
+      # Быстрая проверка, что секреты реально заданы.
+      # Если HOST или API_TOKEN пустые — шаг упадёт и workflow остановится.
       - name: Check required secrets
         run: |
           test -n "$HOST"
           test -n "$API_TOKEN"
 
-      # Запускаем ровно так же, как локально:
-      # docker compose run --rm <service>
+      # Собираем Docker-образ из Dockerfile через docker compose.
+      # ${{ inputs.suite }} — это выбранный пользователем suite (all/smoke/regression/negative).
+      #
+      # Почему build отдельным шагом?
+      # - быстрее/понятнее, если сборка падает (ошибка будет именно на шаге Build)
       - name: Build image
         run: docker compose build ${{ inputs.suite }}
 
+      # Запускаем выбранный сервис из docker-compose.yml.
+      # --rm удаляет контейнер после завершения, чтобы не копились "мертвые" контейнеры.
+      #
+      # Внутри контейнера запускается pytest + формируется allure-results и allure-report
+      # (так же, как у тебя локально).
       - name: Run tests in Docker Compose
         run: docker compose run --rm ${{ inputs.suite }}
 
+      # Дальше шаги для Allure history и публикации отчёта в GitHub Pages.
+      # Важно: `if: always()` означает "выполнять даже если тесты упали".
+      # Это нужно, чтобы отчёт публиковался даже при красных тестах.
+
+      # Чекаутим ветку gh-pages в отдельную папку `gh-pages`.
+      # Это нужно, чтобы взять предыдущую историю Allure (тренды по запускам).
+      # continue-on-error: true — если ветки gh-pages ещё нет, workflow не упадёт.
       - name: Checkout gh-pages (for Allure history)
         if: always()
         continue-on-error: true
@@ -48,10 +78,18 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
+      # На всякий случай создаём папку gh-pages, если её не было.
       - name: Ensure gh-pages dir exists
         if: always()
         run: mkdir -p gh-pages
 
+      # Генерируем HTML-отчёт Allure и добавляем историю (history/trends).
+      #
+      # Что означают параметры:
+      # - allure_results: где лежат результаты pytest (allure-results)
+      # - gh_pages: папка с содержимым текущей ветки gh-pages (для истории)
+      # - allure_report: куда сгенерировать свежий HTML отчёт (allure-report)
+      # - allure_history: папка-выход, которую мы потом публикуем в gh-pages
       - name: Build Allure report (with history)
         if: always()
         uses: simple-elf/allure-report-action@v1.13
@@ -61,6 +99,8 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
+      # Публикуем получившуюся папку allure-history в ветку gh-pages.
+      # GitHub Pages настроен как "Deploy from a branch" → gh-pages.
       - name: Deploy report to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v4
@@ -69,6 +109,9 @@ jobs:
           publish_branch: gh-pages
           publish_dir: allure-history
 
+      # Печатаем ссылку на отчёт в логи + добавляем в Summary справа в интерфейсе Actions.
+      # Обычно отчёт доступен по адресу:
+      # https://<owner>.github.io/<repo>/<run_number>/
       - name: Report URL
         if: always()
         run: |
