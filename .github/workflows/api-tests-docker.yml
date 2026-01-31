@@ -8,7 +8,7 @@ on:
         type: choice
         required: true
         default: all
-        options: [ all, all_marked, regression, negative, smoke, custom ]
+        options: [all, all_marked, regression, negative, smoke, custom]
       markers:
         description: "Custom pytest -m expression (used only if suite=custom)"
         type: string
@@ -67,18 +67,21 @@ jobs:
             pytest -m "$MARKERS" --alluredir=allure-results --clean-alluredir
           fi
 
-
       - name: Checkout gh-pages (for Allure history)
+        if: success() || failure()
         continue-on-error: true
         uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages
 
-      - run: mkdir -p gh-pages
+      - name: Ensure gh-pages dir exists
+        if: success() || failure()
+        run: mkdir -p gh-pages
 
       - name: Build Allure report (with history)
-        if: always()
+        id: build
+        if: success() || failure()
         uses: simple-elf/allure-report-action@v1.13
         with:
           allure_results: allure-results
@@ -87,30 +90,19 @@ jobs:
           allure_history: allure-history
 
       - name: Make root redirect to latest run
-        if: always()
+        if: success() || failure()
         run: |
-          cat > allure-history/index.html <<'HTML'
+          test -d allure-history || { echo "allure-history not found"; exit 1; }
+          cat > allure-history/index.html <<HTML
           <!doctype html>
           <meta charset="utf-8">
           <meta http-equiv="refresh" content="0; url=./${{ github.run_number }}/">
           <title>Allure Report</title>
           <p>Redirecting to latest report...</p>
           HTML
-
-      - name: Make root redirect to latest run
-        if: always()
-        run: |
-          cat > allure-history/index.html <<'HTML'
-          <!doctype html>
-          <meta charset="utf-8">
-          <meta http-equiv="refresh" content="0; url=./${{ github.run_number }}/">
-          <title>Allure Report</title>
-          <p>Redirecting to latest report...</p>
-          HTML
-
 
       - name: Deploy report to GitHub Pages
-        if: always()
+        if: success() || failure()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -118,11 +110,9 @@ jobs:
           publish_dir: allure-history
 
       - name: Report URL
-        if: always()
+        if: success() || failure()
         run: |
           BASE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
           RUN_URL="${BASE}${{ github.run_number }}/"
           echo "Allure report (this run): $RUN_URL"
           echo "Allure report (this run): $RUN_URL" >> "$GITHUB_STEP_SUMMARY"
-
-
