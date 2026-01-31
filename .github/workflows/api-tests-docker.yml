@@ -116,7 +116,16 @@ jobs:
         if: always()
         run: |
           BASE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-          RUN_URL="${BASE}${{ github.run_number }}/"
-          echo "Allure report (this run): $RUN_URL"
-          echo "Allure report (this run): $RUN_URL" >> "$GITHUB_STEP_SUMMARY"
-          echo "Note: base URL may show older cached content: $BASE" >> "$GITHUB_STEP_SUMMARY"
+          echo "Allure report: $BASE"
+          echo "Allure report: $BASE" >> "$GITHUB_STEP_SUMMARY"
+
+
+
+#      - name: Report URL
+#        if: always()
+#        run: |
+#          BASE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+#          RUN_URL="${BASE}${{ github.run_number }}/"
+#          echo "Allure report (this run): $RUN_URL"
+#          echo "Allure report (this run): $RUN_URL" >> "$GITHUB_STEP_SUMMARY"
+#          echo "Note: base URL may show older cached content: $BASE" >> "$GITHUB_STEP_SUMMARY"
