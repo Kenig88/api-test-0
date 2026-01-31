@@ -1,0 +1,151 @@
+# Общий шаблон (anchor) для всех сервисов.
+# Это помогает не копипастить одно и то же (build/volumes/working_dir/env) 4 раза.
+x-base: &base
+  # Собираем образ из Dockerfile в текущей папке (.)
+  build: .
+
+  # Монтируем текущую папку проекта внутрь контейнера.
+  # Благодаря этому изменения в коде/тестах на хосте сразу видны в контейнере,
+  # и не нужно пересобирать image на каждое изменение.
+  volumes: [ ".:/usr/workspace" ]
+
+  # Рабочая папка внутри контейнера (отсюда запускаются команды)
+  working_dir: /usr/workspace
+
+  # Переменные окружения, которые нужны тестам.
+  # Синтаксис ${VAR:?message} — "упасть сразу", если переменная не задана.
+  # Это защищает от ситуации, когда забыли токен и получаем 403 в тестах.
+  environment:
+    HOST: ${HOST:?HOST is required}
+    # В тестах используется APP_ID (это заголовок app-id для DummyAPI).
+    # Значение берём из API_TOKEN на хосте (как ты настроил).
+    APP_ID: ${API_TOKEN:?API_TOKEN is required}
+
+services:
+
+  # Запускает ВСЕ наборы: smoke (crud) + regression + negative
+  all:
+    # Вливаем общий шаблон из x-base
+    <<: *base
+
+    # Команда запуска в контейнере.
+    # sh -c '...' позволяет выполнить много команд подряд.
+    command: >
+      sh -c '
+        # Чистим результаты предыдущих прогонов, чтобы отчёты не смешивались
+        rm -rf allure-results;
+        mkdir -p allure-results;
+
+        # Один запуск pytest на список файлов.
+        # --alluredir=allure-results: сохраняем "сырые" результаты Allure сюда.
+        pytest -sv \
+          tests/users/test_users_crud.py \
+          tests/posts/test_post_crud.py \
+          tests/comments/test_comments_crud.py \
+          tests/users/test_users_regression.py \
+          tests/posts/test_post_regression.py \
+          tests/comments/test_comments_regression.py \
+          tests/users/test_users_negative.py \
+          tests/posts/test_post_negative.py \
+          tests/comments/test_comments_negative.py \
+          --alluredir=allure-results;
+
+        # Сохраняем exit-code pytest (0 = успех, 1/2/... = ошибка)
+        TEST_EXIT=$?;
+
+        # Подтягиваем историю из прошлого allure-report,
+        # чтобы в отчёте сохранялись тренды/графики по запускам.
+        if [ -d allure-report/history ]; then
+          mkdir -p allure-results/history;
+          cp -r allure-report/history/* allure-results/history/ || true;
+        fi;
+
+        # Генерируем HTML-отчёт Allure всегда (даже если pytest упал)
+        allure generate allure-results -o allure-report --clean || true;
+
+        # Для GitHub Pages: отключает Jekyll.
+        # Без этого Pages может игнорировать папки вида _static и отчёт ломается.
+        touch allure-report/.nojekyll || true;
+
+        # Возвращаем реальный exit code от pytest.
+        # $$ — чтобы docker compose не пытался подставить переменную заранее.
+        exit $$TEST_EXIT
+      '
+
+  # Smoke: только CRUD-набор (быстрый прогон)
+  smoke:
+    <<: *base
+    command: >
+      sh -c '
+        rm -rf allure-results;
+        mkdir -p allure-results;
+
+        pytest -sv \
+          tests/users/test_users_crud.py \
+          tests/posts/test_post_crud.py \
+          tests/comments/test_comments_crud.py \
+          --alluredir=allure-results;
+        TEST_EXIT=$?;
+
+        if [ -d allure-report/history ]; then
+          mkdir -p allure-results/history;
+          cp -r allure-report/history/* allure-results/history/ || true;
+        fi;
+
+        allure generate allure-results -o allure-report --clean || true;
+        touch allure-report/.nojekyll || true;
+
+        exit $$TEST_EXIT
+      '
+
+  # Regression: регрессионные тесты (средний по времени прогон)
+  regression:
+    <<: *base
+    command: >
+      sh -c '
+        rm -rf allure-results;
+        mkdir -p allure-results;
+
+        pytest -sv \
+          tests/users/test_users_regression.py \
+          tests/posts/test_post_regression.py \
+          tests/comments/test_comments_regression.py \
+          --alluredir=allure-results;
+        TEST_EXIT=$?;
+
+        if [ -d allure-report/history ]; then
+          mkdir -p allure-results/history;
+          cp -r allure-report/history/* allure-results/history/ || true;
+        fi;
+
+        allure generate allure-results -o allure-report --clean || true;
+        touch allure-report/.nojekyll || true;
+
+        exit $$TEST_EXIT
+      '
+
+  # Negative: негативные тесты (проверка ошибок/валидаций)
+  negative:
+    <<: *base
+    command: >
+      sh -c '
+        rm -rf allure-results;
+        mkdir -p allure-results;
+
+        pytest -sv \
+          tests/users/test_users_negative.py \
+          tests/posts/test_post_negative.py \
+          tests/comments/test_comments_negative.py \
+          --alluredir=allure-results;
+        TEST_EXIT=$?;
+
+        if [ -d allure-report/history ]; then
+          mkdir -p allure-results/history;
+          cp -r allure-report/history/* allure-results/history/ || true;
+        fi;
+
+        allure generate allure-results -o allure-report --clean || true;
+        touch allure-report/.nojekyll || true;
+
+        exit $$TEST_EXIT
+      '

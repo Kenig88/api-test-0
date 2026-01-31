@@ -1,17 +1,38 @@
-# api-test
+# -Тестовый пет-проект API-
 
 
+## Собрать образ Docker:
 
-## Getting started
+1. "docker compose build" \
+или
+2. "docker compose build --no-cache"    <--- если хочу пересобрать “с нуля” без кеша.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Запуск тестов через Docker:
 
-## Add your files
+Запустить smoke:
+* "docker compose run --rm smoke" 
 
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+
+Запустить regression: 
+* "docker compose run --rm regression"
+
+
+Запустить negative:
+* "docker compose run --rm negative" 
+
+
+Запустить всё (all):
+* "docker compose run --rm all"
+
+## Посмотреть историю Allure:
+"allure open allure-report"
+
+***
+***
+***
+***
+***
 
 ```
 cd existing_repo
