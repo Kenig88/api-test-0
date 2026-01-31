@@ -90,9 +90,14 @@ jobs:
           allure_history: allure-history
 
       - name: Make root redirect to latest run
-        if: success() || failure()
+        if: always()
         run: |
           test -d allure-history || { echo "allure-history not found"; exit 1; }
+
+          # Fix possible read-only file from previous content
+          rm -f allure-history/index.html || true
+          chmod -R u+rwX allure-history || true
+
           cat > allure-history/index.html <<HTML
           <!doctype html>
           <meta charset="utf-8">
@@ -100,6 +105,7 @@ jobs:
           <title>Allure Report</title>
           <p>Redirecting to latest report...</p>
           HTML
+
 
       - name: Deploy report to GitHub Pages
         if: success() || failure()
