@@ -9,6 +9,9 @@ class UserEndpoints:
     def get_user_by_id(self, user_id: str) -> str:
         return f"{self.base_url}/user/{user_id}"
 
+    def get_users_list(self) -> str:
+        return f"{self.base_url}/user"
+
     def delete_user(self, user_id: str) -> str:
         return f"{self.base_url}/user/{user_id}"
 

@@ -1,7 +1,5 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
-
-
 from services.common.models import UserPreviewModel
 
 

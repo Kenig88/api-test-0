@@ -1,6 +1,5 @@
 import allure
 import requests
-
 from services.posts.post_endpoints import PostEndpoints
 from services.posts.post_payloads import PostPayloads
 from services.posts.post_model import PostModel, PostPreviewModel
@@ -14,61 +13,81 @@ class PostsAPI(Helper):
         self.endpoints = endpoints
         self.timeout = timeout
 
-
-
-        # ---------- RAW (no asserts) ----------
+    # ==============================================RAW=(no=asserts)====================================================
+    # ==================================================================================================================
+    # ==============================================RAW=(no=asserts)====================================================
 
     @allure.step("POST /post/create (raw)")
     def create_post_response(self, payload: dict) -> requests.Response:
-        resp = self.session.post(self.endpoints.create_post, json=payload, timeout=self.timeout)
+        resp = self.session.post(
+            self.endpoints.create_post,
+            json=payload,
+            timeout=self.timeout
+        )
         self.attach_response_safe(resp)
         return resp
 
     @allure.step("GET /post/{post_id} (raw)")
     def get_post_by_id_response(self, post_id: str) -> requests.Response:
-        resp = self.session.get(self.endpoints.post_by_id(post_id), timeout=self.timeout)
+        resp = self.session.get(
+            self.endpoints.post_by_id(post_id),
+            timeout=self.timeout
+        )
         self.attach_response_safe(resp)
         return resp
 
     @allure.step("PUT /post/{post_id} (raw)")
     def update_post_response(self, post_id: str, payload: dict) -> requests.Response:
-        resp = self.session.put(self.endpoints.post_by_id(post_id), json=payload, timeout=self.timeout)
+        resp = self.session.put(
+            self.endpoints.post_by_id(post_id),
+            json=payload,
+            timeout=self.timeout
+        )
         self.attach_response_safe(resp)
         return resp
 
     @allure.step("DELETE /post/{post_id} (raw)")
     def delete_post_response(self, post_id: str) -> requests.Response:
-        resp = self.session.delete(self.endpoints.post_by_id(post_id), timeout=self.timeout)
+        resp = self.session.delete(
+            self.endpoints.post_by_id(post_id),
+            timeout=self.timeout
+        )
         self.attach_response_safe(resp)
         return resp
 
     @allure.step("GET /post (raw)")
     def list_posts_response(self, limit: int = 10, page: int = 0) -> requests.Response:
-        resp = self.session.get(self.endpoints.list_posts, params={"limit": limit, "page": page}, timeout=self.timeout)
+        resp = self.session.get(
+            self.endpoints.list_posts,
+            params={"limit": limit, "page": page},
+            timeout=self.timeout
+        )
         self.attach_response_safe(resp)
         return resp
 
     @allure.step("GET /user/{user_id}/post (raw)")
     def list_posts_by_user_response(self, user_id: str, limit: int = 10, page: int = 0) -> requests.Response:
-        resp = self.session.get(self.endpoints.posts_by_user(user_id), params={"limit": limit, "page": page}, timeout=self.timeout)
+        resp = self.session.get(
+            self.endpoints.posts_by_user(user_id),
+            params={"limit": limit, "page": page},
+            timeout=self.timeout
+        )
         self.attach_response_safe(resp)
         return resp
 
-
-        # ---------- CHECKED ----------
+    # ================================================CHECKED===========================================================
+    # ==================================================================================================================
+    # ================================================CHECKED===========================================================
 
     @allure.step("Create post (owner={owner_id})")
     def create_post(self, owner_id: str, payload: dict | None = None) -> tuple[str, PostModel]:
         if payload is None:
             payload = PostPayloads.create_post(owner_id)
-
         resp = self.create_post_response(payload)
         body = resp.json()
-
         assert resp.status_code in (200, 201), body
         post_id = body.get("id")
         assert post_id, f"'id' not found in response: {body}"
-
         return post_id, PostModel(**body)
 
     @allure.step("Get post by id: {post_id}")
@@ -88,16 +107,13 @@ class PostsAPI(Helper):
     @allure.step("Delete post by id: {post_id}")
     def delete_post(self, post_id: str, allow_not_found: bool = False) -> str | None:
         resp = self.delete_post_response(post_id)
-
         if allow_not_found and resp.status_code == 404:
             return None  # docs: delete returns string
         assert resp.status_code in (200, 204), resp.text
-
         try:
             body = resp.json()
         except Exception:
             body = resp.text.strip()
-
         if isinstance(body, str):
             return body.strip('"')
         if isinstance(body, dict):
@@ -114,7 +130,11 @@ class PostsAPI(Helper):
 
     @allure.step("List posts by user: {user_id}")
     def list_posts_by_user(self, user_id: str, limit: int = 10, page: int = 0) -> list[PostPreviewModel]:
-        resp = self.list_posts_by_user_response(user_id=user_id, limit=limit, page=page)
+        resp = self.list_posts_by_user_response(
+            user_id=user_id,
+            limit=limit,
+            page=page
+        )
         body = resp.json()
         assert resp.status_code == 200, body
         data = body.get("data", [])

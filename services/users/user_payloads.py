@@ -1,8 +1,8 @@
 import uuid
 from faker import Faker
 
-fake = Faker()
 
+fake = Faker()
 
 class UserPayloads:
 

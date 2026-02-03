@@ -5,7 +5,6 @@ from pydantic import BaseModel, ConfigDict
 
 class UserPreviewModel(BaseModel):
     """User preview used as nested object in Post/Comment responses."""
-
     model_config = ConfigDict(extra="ignore")
 
     id: str

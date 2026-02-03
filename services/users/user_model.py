@@ -12,3 +12,11 @@ class UserModel(BaseModel):
     phone: str | None = None
 
 
+class UserPreviewModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")  # list /user может возвращать дополнительные поля
+
+    id: str | None = None
+    title: str | None = None
+    firstName: str | None = None
+    lastName: str | None = None
+    picture: str | None = None

@@ -1,12 +1,14 @@
 from __future__ import annotations
-
 from typing import Any
-
 import allure
 import requests
 
 
-def assert_dummyapi_error(resp: requests.Response, expected_status: int, expected_error: str) -> dict[str, Any]:
+def assert_dummyapi_error(
+        resp: requests.Response,
+        expected_status: int,
+        expected_error: str
+) -> dict[str, Any]:
     """Assert DummyAPI error response format.
 
     DummyAPI usually returns JSON like: {"error": "...", ...}
@@ -17,8 +19,8 @@ def assert_dummyapi_error(resp: requests.Response, expected_status: int, expecte
         body: dict[str, Any] = resp.json()
     except Exception as e:
         raise AssertionError(f"Response is not JSON: {resp.text}") from e
-
     # Attach for easier debugging in Allure
+
     try:
         allure.attach(
             body=str(body),

@@ -1,8 +1,14 @@
+.git
+.gitignore
 .venv
+.idea
 __pycache__
 .pytest_cache
 allure-results
 allure-report
-.git
-.idea
-*.log
+allure-history
+dist
+build
+*.egg-info
+*.pyc
+.DS_Store

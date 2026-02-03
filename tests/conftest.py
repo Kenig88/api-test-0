@@ -3,13 +3,10 @@ import pytest
 import requests
 from pathlib import Path
 from dotenv import load_dotenv
-
 from services.users.api_users import UsersAPI
 from services.users.user_endpoints import UserEndpoints
-
 from services.posts.api_posts import PostsAPI
 from services.posts.post_endpoints import PostEndpoints
-
 from services.comments.api_comments import CommentsAPI
 from services.comments.comment_endpoints import CommentEndpoints
 
@@ -40,6 +37,8 @@ def api_token() -> str:
 * соединения переиспользуются (быстрее)
 * заголовки не нужно повторять в каждом запросе
 *удобно централизованно менять поведение."""
+
+
 @pytest.fixture(scope="session")
 def http(api_token: str) -> requests.Session:
     session = requests.Session()
@@ -60,19 +59,23 @@ def env_check(http: requests.Session, base_url: str):
 
 # ---------- Test data fixtures: create user(s) + auto cleanup ----------
 
-# =======================================================USERS===========================================================
-# =======================================================================================================================
-# =======================================================USERS===========================================================
+# =======================================================USERS==========================================================
+# ======================================================================================================================
+# =======================================================USERS==========================================================
 
 
 @pytest.fixture(scope="session")
-def endpoints(base_url: str) -> UserEndpoints:
+def user_endpoints(base_url: str) -> UserEndpoints:
     return UserEndpoints(base_url)
 
 
 @pytest.fixture(scope="session")
-def users_api(http: requests.Session, endpoints: UserEndpoints) -> UsersAPI:
-    return UsersAPI(session=http, endpoints=endpoints, timeout=DEFAULT_TIMEOUT)
+def users_api(http: requests.Session, user_endpoints: UserEndpoints) -> UsersAPI:
+    return UsersAPI(
+        session=http,
+        endpoints=user_endpoints,
+        timeout=DEFAULT_TIMEOUT
+    )
 
 
 @pytest.fixture
@@ -102,9 +105,9 @@ def created_user(user_factory):
     return user_factory()
 
 
-# =======================================================POSTS===========================================================
-# =======================================================================================================================
-# =======================================================POSTS===========================================================
+# =======================================================POSTS==========================================================
+# ======================================================================================================================
+# =======================================================POSTS==========================================================
 
 
 @pytest.fixture(scope="session")
@@ -114,7 +117,11 @@ def post_endpoints(base_url: str) -> PostEndpoints:
 
 @pytest.fixture(scope="session")
 def posts_api(http: requests.Session, post_endpoints: PostEndpoints) -> PostsAPI:
-    return PostsAPI(session=http, endpoints=post_endpoints, timeout=DEFAULT_TIMEOUT)
+    return PostsAPI(
+        session=http,
+        endpoints=post_endpoints,
+        timeout=DEFAULT_TIMEOUT
+    )
 
 
 @pytest.fixture
@@ -144,9 +151,9 @@ def created_post(post_factory):
     return post_factory()
 
 
-#======================================================COMMENTS=========================================================
-#=======================================================================================================================
-#======================================================COMMENTS=========================================================
+# ======================================================COMMENTS=========================================================
+# =======================================================================================================================
+# ======================================================COMMENTS=========================================================
 
 
 @pytest.fixture(scope="session")
@@ -156,7 +163,11 @@ def comment_endpoints(base_url: str) -> CommentEndpoints:
 
 @pytest.fixture(scope="session")
 def comments_api(http: requests.Session, comment_endpoints: CommentEndpoints) -> CommentsAPI:
-    return CommentsAPI(session=http, endpoints=comment_endpoints, timeout=DEFAULT_TIMEOUT)
+    return CommentsAPI(
+        session=http,
+        endpoints=comment_endpoints,
+        timeout=DEFAULT_TIMEOUT
+    )
 
 
 @pytest.fixture

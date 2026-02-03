@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 import json
 from typing import Any
-
 import allure
 import requests
 from allure_commons.types import AttachmentType
@@ -14,7 +12,11 @@ class Helper:
     def attach_response(self, response: Any) -> None:
         """Attach JSON-serializable data to Allure as pretty-printed JSON."""
         body = json.dumps(response, indent=4, ensure_ascii=False)
-        allure.attach(body=body, name="API Response", attachment_type=AttachmentType.JSON)
+        allure.attach(
+            body=body,
+            name="API Response",
+            attachment_type=AttachmentType.JSON
+        )
 
     def attach_response_safe(self, response: requests.Response) -> None:
         """Attach response JSON if possible, otherwise attach raw text."""
