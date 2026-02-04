@@ -89,6 +89,31 @@ jobs:
           rm -rf allure-history/latest
           cp -R "allure-history/$RUN" "allure-history/latest"
 
+      # --- Авто-чистка старых прогонов: храним последние 30 папок с цифрами ---
+      - name: Prune old reports (keep last 30)
+        if: always()
+        run: |
+          set -e
+          KEEP=30
+
+          cd allure-history
+
+          # список папок-ранов (только цифры), сортируем по числу, берём всё кроме последних KEEP
+          OLD_DIRS="$(find . -maxdepth 1 -type d -regex './[0-9]+' -printf '%f\n' | sort -n | head -n -${KEEP} || true)"
+
+          if [ -z "$OLD_DIRS" ]; then
+            echo "Nothing to prune (<= $KEEP runs)."
+            exit 0
+          fi
+
+          echo "Pruning old runs:"
+          echo "$OLD_DIRS"
+
+          # удаляем старые папки
+          for d in $OLD_DIRS; do
+            rm -rf "$d"
+          done
+
       # Редирект с корня Pages на latest/ (не зависит от кеша на старый run_number)
       - name: Make root redirect to latest
         if: always()
@@ -141,6 +166,7 @@ jobs:
             echo "Allure report (latest): $LATEST_URL"
             echo "Allure report (this run): $RUN_URL"
           } >> "$GITHUB_STEP_SUMMARY"
+
 
 
 
