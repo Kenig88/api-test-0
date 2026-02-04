@@ -24,7 +24,6 @@ jobs:
     env:
       HOST: ${{ secrets.HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
-      # чтобы поведение было "CI-стиль" (если захочешь использовать это в скриптах)
       CI: "true"
 
     steps:
@@ -55,7 +54,6 @@ jobs:
         if: always()
         run: mkdir -p gh-pages
 
-      # (полезно для дебага, если вдруг allure-results не появился)
       - name: Debug allure-results
         if: always()
         run: |
@@ -74,15 +72,25 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
-      # simple-elf часто создаёт файлы как root -> без этого может быть Permission denied
       - name: Fix permissions after allure action
         if: always()
         run: |
           sudo chown -R $USER:$USER allure-history || true
           sudo chmod -R u+rwX allure-history || true
 
-      # Редирект с корня Pages на папку текущего run_number
-      - name: Make root redirect to latest run
+      # --- ВАЖНО: делаем стабильный алиас latest/ на текущий run_number ---
+      - name: Update latest alias
+        if: always()
+        run: |
+          set -e
+          RUN="${{ github.run_number }}"
+          test -d "allure-history/$RUN" || { echo "No folder allure-history/$RUN"; exit 0; }
+
+          rm -rf allure-history/latest
+          cp -R "allure-history/$RUN" "allure-history/latest"
+
+      # Редирект с корня Pages на latest/ (не зависит от кеша на старый run_number)
+      - name: Make root redirect to latest
         if: always()
         run: |
           test -d allure-history || { echo "allure-history not found"; exit 0; }
@@ -95,22 +103,20 @@ jobs:
               <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
               <meta http-equiv="Pragma" content="no-cache" />
               <meta http-equiv="Expires" content="0" />
-              <meta http-equiv="refresh" content="0; url=./${{ github.run_number }}/" />
+              <meta http-equiv="refresh" content="0; url=./latest/" />
               <title>Allure Report</title>
               <script>
-                // JS redirect (обычно помогает против кеша meta refresh)
-                location.replace("./${{ github.run_number }}/");
+                location.replace("./latest/");
               </script>
             </head>
             <body>
               <p>Redirecting to latest report...</p>
-              <p><a href="./${{ github.run_number }}/">Open latest report</a></p>
+              <p><a href="./latest/">Open latest report</a></p>
             </body>
           </html>
           HTML
 
           touch allure-history/.nojekyll || true
-
 
       - name: Deploy report to GitHub Pages
         if: always()
@@ -121,18 +127,18 @@ jobs:
           publish_dir: allure-history
           force_orphan: true
 
-
       - name: Report URL
         if: always()
         run: |
           BASE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
           RUN_URL="${BASE}${{ github.run_number }}/"
+          LATEST_URL="${BASE}latest/"
 
-          echo "Allure report (latest): $BASE"
+          echo "Allure report (latest): $LATEST_URL"
           echo "Allure report (this run): $RUN_URL"
 
           {
-            echo "Allure report (latest): $BASE"
+            echo "Allure report (latest): $LATEST_URL"
             echo "Allure report (this run): $RUN_URL"
           } >> "$GITHUB_STEP_SUMMARY"
 
