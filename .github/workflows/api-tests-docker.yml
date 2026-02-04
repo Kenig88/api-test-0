@@ -1,5 +1,10 @@
 name: API tests (Docker + Allure)
 
+# -----------------------------
+# Когда запускается workflow
+# -----------------------------
+# workflow_dispatch = запуск вручную из вкладки Actions → Run workflow
+# Мы даём выбрать набор тестов (suite), который соответствует сервису в docker-compose.yml
 on:
   workflow_dispatch:
     inputs:
@@ -10,38 +15,79 @@ on:
         default: all
         options: [all, smoke, regression, negative]
 
+# -----------------------------
+# Защита от одновременных запусков
+# -----------------------------
+# Если на одной ветке кто-то запустит workflow второй раз — первый будет отменён
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# -----------------------------
+# Права для пуша в gh-pages
+# -----------------------------
+# Нам нужно contents: write, потому что дальше мы будем публиковать отчёт в ветку gh-pages
 permissions:
   contents: write
 
 jobs:
   tests:
+    # GitHub выдаёт чистую Ubuntu-машину (runner), где будут выполняться шаги
     runs-on: ubuntu-latest
 
+    # Общие переменные окружения для всех шагов job’а.
+    # HOST и API_TOKEN берём из Secrets репозитория.
     env:
       HOST: ${{ secrets.HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
       CI: "true"
 
     steps:
+      # -----------------------------
+      # 1) Забираем код репозитория
+      # -----------------------------
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # -----------------------------
+      # 2) Проверяем, что секреты реально заданы
+      # -----------------------------
+      # Если переменные пустые — тесты скорее всего не смогут ходить в API, и лучше упасть сразу
       - name: Check required secrets
         run: |
           test -n "$HOST"
           test -n "$API_TOKEN"
 
+      # -----------------------------
+      # 3) Собираем Docker-образ для выбранного suite
+      # -----------------------------
+      # suite — это имя сервиса из docker-compose.yml (all/smoke/regression/negative)
       - name: Build image
         run: docker compose build ${{ inputs.suite }}
 
+      # -----------------------------
+      # 4) Запускаем тесты в контейнере
+      # -----------------------------
+      # Контейнер делает только:
+      # - запускает pytest
+      # - создаёт "сырые" результаты Allure в папку allure-results
+      #
+      # ВАЖНО: благодаря volume ".:/usr/workspace" папка allure-results создаётся
+      # прямо в workspace GitHub Actions (на хосте), хотя пишет её контейнер.
       - name: Run tests in Docker Compose
         run: docker compose run --rm ${{ inputs.suite }}
 
-      # --- Allure history: подтягиваем gh-pages в папку gh-pages ---
+      # -------------------------------------------------------------------
+      # Дальше шаги Allure выполняем всегда (даже если тесты упали)
+      # if: always() = выполнять независимо от exit code предыдущих шагов
+      # Это важно: отчёт нужен даже при красных тестах.
+      # -------------------------------------------------------------------
+
+      # -----------------------------
+      # 5) Подтягиваем прошлую историю отчётов из ветки gh-pages
+      # -----------------------------
+      # Это нужно, чтобы Allure мог показывать "тренды" и хранить несколько прогонов.
+      # continue-on-error: true — если gh-pages ещё не создана, workflow не упадёт.
       - name: Checkout gh-pages (for Allure history)
         if: always()
         continue-on-error: true
@@ -50,10 +96,15 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
+      # Если ветки gh-pages нет, папки тоже может не быть — создаём её на всякий случай
       - name: Ensure gh-pages dir exists
         if: always()
         run: mkdir -p gh-pages
 
+      # -----------------------------
+      # 6) Диагностика (для дебага)
+      # -----------------------------
+      # Иногда полезно увидеть, что allure-results реально появился и не пустой
       - name: Debug allure-results
         if: always()
         run: |
@@ -62,7 +113,13 @@ jobs:
           echo "allure-results:"
           ls -la allure-results || true
 
-      # --- Генерация Allure HTML + history в allure-history ---
+      # -----------------------------
+      # 7) Генерируем Allure HTML + историю в allure-history
+      # -----------------------------
+      # simple-elf/allure-report-action:
+      # - читает allure-results (сырые результаты)
+      # - берёт историю из gh-pages
+      # - собирает итоговую папку allure-history (готовую для публикации в Pages)
       - name: Build Allure report (with history)
         if: always()
         uses: simple-elf/allure-report-action@v1.13
@@ -72,13 +129,25 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
+      # -----------------------------
+      # 8) Чиним права доступа
+      # -----------------------------
+      # Docker-based action иногда создаёт файлы как root, и потом обычный шаг не может их править.
+      # Поэтому "chown + chmod" — чтобы дальше можно было создавать index.html и т.п.
       - name: Fix permissions after allure action
         if: always()
         run: |
           sudo chown -R $USER:$USER allure-history || true
           sudo chmod -R u+rwX allure-history || true
 
-      # --- ВАЖНО: делаем стабильный алиас latest/ на текущий run_number ---
+      # -----------------------------
+      # 9) Делаем алиас latest/ на текущий run_number
+      # -----------------------------
+      # В allure-history action обычно кладёт отчёты по папкам: /<run_number>/
+      # Мы копируем текущий отчёт ещё и в /latest/
+      # Зачем это нужно:
+      # - корень сайта может кешироваться и "залипать" на старом /42/
+      # - а /latest/ всегда один и тот же URL, который мы перезаписываем
       - name: Update latest alias
         if: always()
         run: |
@@ -89,16 +158,23 @@ jobs:
           rm -rf allure-history/latest
           cp -R "allure-history/$RUN" "allure-history/latest"
 
-      # --- Авто-чистка старых прогонов: храним последние 30 папок с цифрами ---
-      - name: Prune old reports (keep last 30)
+      # -----------------------------
+      # 10) Авто-чистка старых прогонов
+      # -----------------------------
+      # Чтобы ветка gh-pages не разрасталась бесконечно, храним только последние 10 папок-ранов.
+      # Удаляем только папки, которые состоят из цифр (например 42, 43, 44...)
+      # Папку latest/ не трогаем.
+      - name: Prune old reports (keep last 10)
         if: always()
         run: |
           set -e
-          KEEP=30
+          KEEP=10
 
           cd allure-history
 
-          # список папок-ранов (только цифры), сортируем по числу, берём всё кроме последних KEEP
+          # Находим директории вида "число"
+          # сортируем по номеру
+          # берём все кроме последних KEEP
           OLD_DIRS="$(find . -maxdepth 1 -type d -regex './[0-9]+' -printf '%f\n' | sort -n | head -n -${KEEP} || true)"
 
           if [ -z "$OLD_DIRS" ]; then
@@ -109,12 +185,15 @@ jobs:
           echo "Pruning old runs:"
           echo "$OLD_DIRS"
 
-          # удаляем старые папки
           for d in $OLD_DIRS; do
             rm -rf "$d"
           done
 
-      # Редирект с корня Pages на latest/ (не зависит от кеша на старый run_number)
+      # -----------------------------
+      # 11) Делаем редирект с корня сайта на latest/
+      # -----------------------------
+      # Теперь открывая https://<owner>.github.io/<repo>/ ты сразу попадаешь на свежий отчёт.
+      # Добавляем также мета/JS, чтобы уменьшить проблемы с кешем.
       - name: Make root redirect to latest
         if: always()
         run: |
@@ -141,8 +220,15 @@ jobs:
           </html>
           HTML
 
+          # .nojekyll нужен, чтобы Pages не ломал отчёт (папки типа _static)
           touch allure-history/.nojekyll || true
 
+      # -----------------------------
+      # 12) Публикуем allure-history в ветку gh-pages
+      # -----------------------------
+      # GitHub Pages настроен брать сайт из gh-pages/(root).
+      # force_orphan: true — пересоздаёт ветку "с нуля" при каждом деплое,
+      # это делает деплой более предсказуемым (без артефактов прошлого).
       - name: Deploy report to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v4
@@ -152,6 +238,11 @@ jobs:
           publish_dir: allure-history
           force_orphan: true
 
+      # -----------------------------
+      # 13) Печатаем ссылки на отчёт в лог и в Summary
+      # -----------------------------
+      # latest/ — всегда свежий отчёт
+      # /<run_number>/ — отчёт конкретного прогона
       - name: Report URL
         if: always()
         run: |
@@ -166,6 +257,7 @@ jobs:
             echo "Allure report (latest): $LATEST_URL"
             echo "Allure report (this run): $RUN_URL"
           } >> "$GITHUB_STEP_SUMMARY"
+
 
 
 
