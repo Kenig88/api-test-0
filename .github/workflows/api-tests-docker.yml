@@ -1,14 +1,14 @@
-name: API tests
+name: API tests (Docker + Allure)
 
 on:
   workflow_dispatch:
     inputs:
       suite:
-        description: "Test suite"
+        description: "Test suite (docker-compose service)"
         type: choice
         required: true
         default: all
-        options: [all, regression, negative, smoke]
+        options: [all, smoke, regression, negative]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,9 +24,12 @@ jobs:
     env:
       HOST: ${{ secrets.HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
+      # чтобы поведение было "CI-стиль" (если захочешь использовать это в скриптах)
+      CI: "true"
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Check required secrets
         run: |
@@ -34,16 +37,12 @@ jobs:
           test -n "$API_TOKEN"
 
       - name: Build image
-        run: docker compose build tests
+        run: docker compose build ${{ inputs.suite }}
 
-      - name: Run tests (produce allure-results)
-        run: |
-          if [ "${{ inputs.suite }}" = "all" ]; then
-            docker compose run --rm tests
-          else
-            docker compose run --rm -e SUITE_MARKERS="${{ inputs.suite }}" tests
-          fi
+      - name: Run tests in Docker Compose
+        run: docker compose run --rm ${{ inputs.suite }}
 
+      # --- Allure history: подтягиваем gh-pages в папку gh-pages ---
       - name: Checkout gh-pages (for Allure history)
         if: always()
         continue-on-error: true
@@ -56,6 +55,16 @@ jobs:
         if: always()
         run: mkdir -p gh-pages
 
+      # (полезно для дебага, если вдруг allure-results не появился)
+      - name: Debug allure-results
+        if: always()
+        run: |
+          echo "Workspace:"
+          ls -la
+          echo "allure-results:"
+          ls -la allure-results || true
+
+      # --- Генерация Allure HTML + history в allure-history ---
       - name: Build Allure report (with history)
         if: always()
         uses: simple-elf/allure-report-action@v1.13
@@ -65,6 +74,14 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
+      # simple-elf часто создаёт файлы как root -> без этого может быть Permission denied
+      - name: Fix permissions after allure action
+        if: always()
+        run: |
+          sudo chown -R $USER:$USER allure-history || true
+          sudo chmod -R u+rwX allure-history || true
+
+      # Редирект с корня Pages на папку текущего run_number
       - name: Make root redirect to latest run
         if: always()
         run: |
@@ -78,6 +95,7 @@ jobs:
           <p>Redirecting to latest report...</p>
           HTML
 
+          # Чтобы GitHub Pages не ломал Allure (папки _static и т.п.)
           touch allure-history/.nojekyll || true
 
       - name: Deploy report to GitHub Pages
@@ -101,6 +119,8 @@ jobs:
             echo "Allure report (latest): $BASE"
             echo "Allure report (this run): $RUN_URL"
           } >> "$GITHUB_STEP_SUMMARY"
+
+
 
 
 #name: API tests
@@ -249,10 +269,10 @@ jobs:
 #            echo "Allure report (latest): $BASE"
 #            echo "Allure report (this run): $RUN_URL"
 #          } >> "$GITHUB_STEP_SUMMARY"
-
-
-
-
+#
+#
+#
+#
 #      - name: Report URL
 #        if: always()
 #        run: |
