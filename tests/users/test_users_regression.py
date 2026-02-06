@@ -16,8 +16,6 @@ class TestUsers(BaseTest):
             assert user.firstName
             assert user.lastName
             assert user.email
-            # если хочу печатать:
-            print(user.model_dump_json() if hasattr(user, "model_dump_json") else user.json())
 
     @allure.title("Get User by id -> GET /user/{id}")
     def test_get_user_by_id(self, created_user):
@@ -61,7 +59,7 @@ class TestUsers(BaseTest):
             assert fetched.firstName == "UpdatedName"
             assert fetched.lastName == "UpdatedLast"
 
-            # email по доке нельзя обновлять — проверим, что остался прежним (если есть)
+            # email по доке нельзя обновлять — проверю, что остался прежний (если есть)
             if created.email and fetched.email:
                 assert fetched.email == created.email
 

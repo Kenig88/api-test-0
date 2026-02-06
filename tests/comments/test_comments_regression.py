@@ -85,7 +85,7 @@ class TestComments(BaseTest):
 
         with allure.step("DELETE: delete comment by id"):
             deleted_id = self.api_comments.delete_comment(comment_id)
-            # delete в доке возвращает строку id — у тебя это уже обработано в API
+            # delete в доке возвращает строку id
             assert deleted_id is not None
 
         with allure.step("VERIFY DELETE: повторный DELETE -> 404"):
