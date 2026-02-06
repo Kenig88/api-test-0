@@ -38,7 +38,6 @@ class TestPostsNegative(BaseTest):
                 "text": "Hello world",
                 "image": "https://example.com/1.jpg",
                 "likes": 0,
-                "tags": ["qa"],
                 "owner": "000000000000000000000000",
             },
         )
@@ -53,7 +52,6 @@ class TestPostsNegative(BaseTest):
                 "text": "Hello world",
                 "image": "https://example.com/1.jpg",
                 "likes": 0,
-                "tags": ["qa"],
                 "owner": "000000000000000000000000",
             },
         )
@@ -69,20 +67,20 @@ class TestPostsNegative(BaseTest):
                 "text": "Hello world",
                 "image": "https://example.com/1.jpg",
                 "likes": 0,
-                "tags": ["qa"],
                 # owner отсутствует
             }
         )
         assert_dummyapi_error(resp, 400, "BODY_NOT_VALID")
 
     @allure.title("POST /post/create without text -> 400 BODY_NOT_VALID")
-    def test_create_post_missing_text(self):
+    def test_create_post_missing_text(self, created_user):
+        owner_id, _ = created_user
+
         resp = self.api_posts.create_post_response(
             payload={
                 # text отсутствует
                 "image": "https://example.com/1.jpg",
                 "likes": 0,
-                "tags": ["qa"],
                 "owner": "000000000000000000000000",
             }
         )

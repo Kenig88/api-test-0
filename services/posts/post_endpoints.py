@@ -9,6 +9,3 @@ class PostEndpoints:
 
     def posts_by_user(self, user_id: str) -> str:
         return f"{self.base_url}/user/{user_id}/post"
-
-    def posts_by_tag(self, tag_id: str) -> str:
-        return f"{self.base_url}/tag/{tag_id}/post"

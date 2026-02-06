@@ -12,7 +12,6 @@ class PostPayloads:
             text: str | None = None,       # текст поста (если None — сгенерим дефолтный)
             image: str | None = None,      # ссылка на картинку (если None — поставим дефолт)
             likes: int = 0,                # лайки по умолчанию 0
-            tags: list[str] | None = None  # список тегов (если None — дефолтные теги)
     ) -> dict:
         """
         Генерирует payload для создания поста.
@@ -36,16 +35,11 @@ class PostPayloads:
         if image is None:
             image = "https://images.unsplash.com/photo-1542291026-7eec264c27ff"
 
-        # Если теги не передали — ставим дефолтные
-        if tags is None:
-            tags = ["qa", "pytest"]
-
         # Собираем финальный dict, который отправится как JSON
         return {
             "text": text,          # обязательное/важное поле (часто требуется API)
             "image": image,        # ссылка на картинку
             "likes": likes,        # количество лайков
-            "tags": tags,          # список тегов
             "owner": owner_id,     # owner обязателен по API: кому принадлежит пост
         }
 
@@ -55,7 +49,6 @@ class PostPayloads:
             image: str | None = None,
             likes: int | None = None,
             link: str | None = None,
-            tags: list[str] | None = None
     ) -> dict:
         """
         Генерирует payload для обновления поста.
@@ -76,7 +69,5 @@ class PostPayloads:
             payload["likes"] = likes
         if link is not None:
             payload["link"] = link
-        if tags is not None:
-            payload["tags"] = tags
 
         return payload  # вернём только то, что нужно обновить

@@ -48,11 +48,10 @@ class TestPosts(BaseTest):
             post_id, _ = post_factory(owner_id=user_id)
             assert post_id
 
-        with allure.step("UPDATE: update post fields (text/likes/tags)"):
+        with allure.step("UPDATE: update post fields (text/likes)"):
             update_payload = PostPayloads.update_post(
                 text="Updated post text",
                 likes=123,
-                tags=["updated", "qa"],
             )
             updated = self.api_posts.update_post(post_id, update_payload)
             assert updated.id == post_id
@@ -63,7 +62,6 @@ class TestPosts(BaseTest):
             assert fetched.id == post_id
             assert fetched.text == "Updated post text"
             assert fetched.likes == 123
-            assert fetched.tags == ["updated", "qa"]
             assert fetched.owner is not None
             assert fetched.owner.id == user_id  # owner нельзя обновлять
 

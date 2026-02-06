@@ -24,7 +24,14 @@ class TestUsers(BaseTest):
         with allure.step("UPDATE: PUT /user/{id} (change firstName/lastName)"):
             update_payload = {"firstName": "UpdatedName", "lastName": "UpdatedLast"}
             updated = self.api_users.update_user(user_id, update_payload)
+
             assert updated.id == user_id
+            assert updated.firstName == "UpdatedName"
+            assert updated.lastName == "UpdatedLast"
+
+            # email обычно нельзя обновлять — проверим, что не изменился (если есть)
+            if created.email and updated.email:
+                assert updated.email == created.email
 
         with allure.step("READ: GET /user/{id} (check updated fields)"):
             fetched_after_update = self.api_users.get_user_by_id(user_id)
@@ -32,9 +39,17 @@ class TestUsers(BaseTest):
             assert fetched_after_update.firstName == "UpdatedName"
             assert fetched_after_update.lastName == "UpdatedLast"
 
+            if created.email and fetched_after_update.email:
+                assert fetched_after_update.email == created.email
+
         with allure.step("DELETE: DELETE /user/{id}"):
             self.api_users.delete_user(user_id)
 
         with allure.step("VERIFY DELETE: GET /user/{id} after delete -> 404"):
             resp = self.api_users.get_user_by_id_response(user_id)
-            assert resp.status_code == 404, resp.text
+            try:
+                body = resp.json()
+            except Exception:
+                body = resp.text
+
+            assert resp.status_code == 404, body

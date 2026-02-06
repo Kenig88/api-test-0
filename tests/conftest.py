@@ -133,9 +133,9 @@ def user_factory(users_api: UsersAPI):
     """
     created_ids: list[str] = []  # сюда будем складывать id созданных юзеров для последующего удаления
 
-    def create():
+    def create(payload: dict | None = None):
         # create_user() возвращает (user_id, user_payload)
-        user_id, user = users_api.create_user()
+        user_id, user = users_api.create_user(payload=payload)
         assert user_id  # сразу убеждаемся, что создание прошло успешно
         created_ids.append(user_id)  # запоминаем id для cleanup
         return user_id, user
