@@ -1,12 +1,13 @@
-from pydantic import BaseModel, ConfigDict
-
-
-class UserPreviewModel(BaseModel):
-    """User preview used as nested object in Post/Comment responses."""
-    model_config = ConfigDict(extra="ignore")
-
-    id: str
-    title: str | None = None
-    firstName: str | None = None
-    lastName: str | None = None
-    picture: str | None = None
+# from typing import Optional
+# from pydantic import BaseModel, ConfigDict
+#
+#
+# class UserPreviewModel(BaseModel):
+#     """User preview used as nested object in Post/Comment responses."""
+#     model_config = ConfigDict(extra="ignore")
+#
+#     id: str
+#     title: Optional[str] = None
+#     firstName: Optional[str] = None
+#     lastName: Optional[str] = None
+#     picture: Optional[str] = None
