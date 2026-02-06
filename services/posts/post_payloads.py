@@ -1,31 +1,52 @@
-from uuid import uuid4
+from uuid import uuid4  # uuid4() — быстрый способ сделать уникальный суффикс для текста поста
 
 
 class PostPayloads:
+    """
+    Фабрика payload'ов для Posts API.
+    """
+
     @staticmethod
     def create_post(
-            owner_id: str,
-            text: str | None = None,
-            image: str | None = None,
-            likes: int = 0,
-            tags: list[str] | None = None
+            owner_id: str,                 # обязательный: id владельца поста (user id)
+            text: str | None = None,       # текст поста (если None — сгенерим дефолтный)
+            image: str | None = None,      # ссылка на картинку (если None — поставим дефолт)
+            likes: int = 0,                # лайки по умолчанию 0
+            tags: list[str] | None = None  # список тегов (если None — дефолтные теги)
     ) -> dict:
+        """
+        Генерирует payload для создания поста.
 
+        Здесь мы делаем "умные дефолты", чтобы в тестах было проще:
+        - передал только owner_id — и уже можно создавать пост
+        """
+
+        # Валидация обязательного поля: если owner_id пустой, это ошибка использования метода
         if not owner_id:
             raise ValueError("owner_id is required")
-        if text is None:  # Post Create: text length 6-50 (preview)
-            text = f"Auto post {uuid4().hex[:8]}"
+
+        # Если текст не передали — делаем автотекст.
+        # Часто в API есть ограничения по длине (например 6-50 символов),
+        # поэтому делаем короткий, но валидный текст.
+        if text is None:
+            text = f"Auto post {uuid4().hex[:8]}"  # [:8] — короткий уникальный кусочек
+
+        # Если image не передали — ставим стабильную ссылку.
+        # (В идеале можно держать свою "тестовую" ссылку, чтобы она не умирала.)
         if image is None:
             image = "https://images.unsplash.com/photo-1542291026-7eec264c27ff"
+
+        # Если теги не передали — ставим дефолтные
         if tags is None:
             tags = ["qa", "pytest"]
 
+        # Собираем финальный dict, который отправится как JSON
         return {
-            "text": text,
-            "image": image,
-            "likes": likes,
-            "tags": tags,
-            "owner": owner_id,  # required
+            "text": text,          # обязательное/важное поле (часто требуется API)
+            "image": image,        # ссылка на картинку
+            "likes": likes,        # количество лайков
+            "tags": tags,          # список тегов
+            "owner": owner_id,     # owner обязателен по API: кому принадлежит пост
         }
 
     @staticmethod
@@ -36,8 +57,17 @@ class PostPayloads:
             link: str | None = None,
             tags: list[str] | None = None
     ) -> dict:
+        """
+        Генерирует payload для обновления поста.
 
-        payload: dict = {}
+        Тут принцип другой:
+        - мы добавляем в payload только те поля, которые реально передали (не None)
+        - это удобно для PATCH/PUT сценариев: меняем только нужные поля
+        """
+
+        payload: dict = {}  # начнём с пустого payload
+
+        # Каждое поле добавляем только если оно передано (не None)
         if text is not None:
             payload["text"] = text
         if image is not None:
@@ -48,4 +78,5 @@ class PostPayloads:
             payload["link"] = link
         if tags is not None:
             payload["tags"] = tags
-        return payload
+
+        return payload  # вернём только то, что нужно обновить

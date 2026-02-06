@@ -1,5 +1,3 @@
-from __future__ import annotations
-from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
 
@@ -8,7 +6,7 @@ class UserPreviewModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
     id: str
-    title: Optional[str] = None
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    picture: Optional[str] = None
+    title: str | None = None
+    firstName: str | None = None
+    lastName: str | None = None
+    picture: str | None = None
