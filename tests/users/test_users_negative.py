@@ -27,6 +27,7 @@ class TestUsersNegative(BaseTest):
         self.api_users.attach_response_safe(resp)
         return resp
 
+
     # ---------------- APP_ID errors ----------------
 
     @allure.title("GET /user without app-id -> 403 APP_ID_MISSING")
@@ -42,6 +43,7 @@ class TestUsersNegative(BaseTest):
         )
         assert_dummyapi_error(resp, 403, "APP_ID_NOT_EXIST")
 
+
     # ---------------- BODY_NOT_VALID ----------------
 
     @allure.title("POST /user/create with missing required fields -> 400 BODY_NOT_VALID")
@@ -53,6 +55,7 @@ class TestUsersNegative(BaseTest):
         )
         assert_dummyapi_error(resp, 400, "BODY_NOT_VALID")
 
+
     # ---------------- PARAMS_NOT_VALID ----------------
 
     @allure.title("GET /user/{bad_id} -> 400 PARAMS_NOT_VALID")
@@ -63,6 +66,7 @@ class TestUsersNegative(BaseTest):
             headers={"app-id": api_token},
         )
         assert_dummyapi_error(resp, 400, "PARAMS_NOT_VALID")
+
 
     # ---------------- RESOURCE_NOT_FOUND ----------------
 
@@ -80,6 +84,7 @@ class TestUsersNegative(BaseTest):
         non_exist_id = "000000000000000000000000"
         resp = self.api_users.delete_user_response(non_exist_id)
         assert_dummyapi_error(resp, 404, "RESOURCE_NOT_FOUND")
+
 
     # ---------------- PATH_NOT_FOUND ----------------
 

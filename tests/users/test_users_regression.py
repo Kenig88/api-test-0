@@ -16,7 +16,7 @@ class TestUsers(BaseTest):
             assert user.firstName
             assert user.lastName
             assert user.email
-            # если хочешь печать:
+            # если хочу печатать:
             print(user.model_dump_json() if hasattr(user, "model_dump_json") else user.json())
 
     @allure.title("Get User by id -> GET /user/{id}")

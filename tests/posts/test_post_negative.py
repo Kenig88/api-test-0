@@ -27,6 +27,7 @@ class TestPostsNegative(BaseTest):
         self.api_posts.attach_response_safe(resp)
         return resp
 
+
     # ---------------- APP_ID errors ----------------
 
     @allure.title("POST /post/create without app-id -> 403 APP_ID_MISSING")
@@ -58,6 +59,7 @@ class TestPostsNegative(BaseTest):
         )
         assert_dummyapi_error(resp, 403, "APP_ID_NOT_EXIST")
 
+
     # ---------------- BODY_NOT_VALID ----------------
 
     @allure.title("POST /post/create without owner -> 400 BODY_NOT_VALID")
@@ -86,6 +88,7 @@ class TestPostsNegative(BaseTest):
         )
         assert_dummyapi_error(resp, 400, "BODY_NOT_VALID")
 
+
     # ---------------- PARAMS_NOT_VALID ----------------
 
     @allure.title("GET /post/{bad_id} -> 400 PARAMS_NOT_VALID")
@@ -93,6 +96,7 @@ class TestPostsNegative(BaseTest):
         bad_id = "123"
         resp = self.api_posts.get_post_by_id_response(bad_id)
         assert_dummyapi_error(resp, 400, "PARAMS_NOT_VALID")
+
 
     # ---------------- RESOURCE_NOT_FOUND ----------------
 
@@ -107,6 +111,7 @@ class TestPostsNegative(BaseTest):
         non_exist_id = "000000000000000000000000"
         resp = self.api_posts.delete_post_response(non_exist_id)
         assert_dummyapi_error(resp, 404, "RESOURCE_NOT_FOUND")
+
 
     # ---------------- PATH_NOT_FOUND ----------------
 

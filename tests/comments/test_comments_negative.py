@@ -54,6 +54,7 @@ class TestCommentsNegative(BaseTest):
         )
         assert_dummyapi_error(resp, 403, "APP_ID_NOT_EXIST")
 
+
     # ---------------- BODY_NOT_VALID ----------------
 
     @allure.title("POST /comment/create missing owner -> 400 BODY_NOT_VALID")
@@ -75,6 +76,7 @@ class TestCommentsNegative(BaseTest):
         )
         assert_dummyapi_error(resp, 400, "BODY_NOT_VALID")
 
+
     # ---------------- PARAMS_NOT_VALID ----------------
 
     @allure.title("GET /post/{bad_id}/comment -> 400 PARAMS_NOT_VALID")
@@ -87,6 +89,7 @@ class TestCommentsNegative(BaseTest):
         )
         assert_dummyapi_error(resp, 400, "PARAMS_NOT_VALID")
 
+
     # ---------------- RESOURCE_NOT_FOUND ----------------
 
     @allure.title("DELETE /comment/{id} for non-existent id -> 404 RESOURCE_NOT_FOUND")
@@ -94,6 +97,7 @@ class TestCommentsNegative(BaseTest):
         non_exist_comment_id = "000000000000000000000000"
         resp = self.api_comments.delete_comment_response(non_exist_comment_id)
         assert_dummyapi_error(resp, 404, "RESOURCE_NOT_FOUND")
+
 
     # ---------------- PATH_NOT_FOUND ----------------
 
