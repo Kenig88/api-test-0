@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 
+
 class UserModel(BaseModel):
     model_config = ConfigDict(extra="ignore")  # list /user может возвращать другие/неполные поля
 
