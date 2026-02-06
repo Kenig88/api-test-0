@@ -5,9 +5,12 @@ FROM python:3.11-alpine
 
 # ENV — переменные окружения внутри контейнера.
 # Они делают поведение Python/pip удобнее в CI и при отладке.
-ENV PYTHONDONTWRITEBYTECODE=1 \        # не создавать .pyc файлы (меньше мусора)
-    PYTHONUNBUFFERED=1 \               # вывод в лог сразу, без буферизации (важно в CI)
-    PIP_DISABLE_PIP_VERSION_CHECK=1    # pip не будет спамить про "новая версия доступна"
+# PYTHONDONTWRITEBYTECODE=1 не создавать .pyc файлы (меньше мусора)
+# PYTHONUNBUFFERED=1 вывод в лог сразу, без буферизации (важно в CI)
+# PIP_DISABLE_PIP_VERSION_CHECK=1 pip не будет спамить про "новая версия доступна"
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 
 # Устанавливаем системные пакеты ОС (через apk — пакетный менеджер Alpine).
