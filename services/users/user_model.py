@@ -1,22 +1,13 @@
 from pydantic import BaseModel, ConfigDict
 
-
-class UserPreviewModel(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # list /user может возвращать дополнительные поля
+class UserModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")  # list /user может возвращать другие/неполные поля
 
     id: str
+    email: str | None = None   # <-- ВАЖНО: в списке email часто отсутствует
+    firstName: str
+    lastName: str
     title: str | None = None
-    firstName: str | None = None
-    lastName: str | None = None
     picture: str | None = None
-
-
-class UserModel(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # игнорируем лишние поля из ответа
-
-    id: str | None = None
-    email: str | None = None
-    firstName: str | None = None
-    lastName: str | None = None
     dateOfBirth: str | None = None
     phone: str | None = None
