@@ -15,7 +15,6 @@ class TestPostsNegative(BaseTest):
     @allure.title("POST /post/create without app-id -> 403 APP_ID_MISSING")
     def test_create_post_without_app_id(self, raw_posts, created_user, base_url: str):
         owner_id, _ = created_user
-
         resp = raw_posts.post(
             f"{base_url}/post/create",
             json_body={

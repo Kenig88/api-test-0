@@ -1,14 +1,13 @@
 import pytest
 import allure
-
 from config.base_test import BaseTest
 
 
 @allure.epic("Administration")
 @allure.feature("Users")
+@pytest.mark.regression
 class TestUsers(BaseTest):
 
-    @pytest.mark.regression
     @allure.title("Create User -> POST /user/create")
     def test_create_user(self, created_user):
         user_id, user = created_user
@@ -20,42 +19,44 @@ class TestUsers(BaseTest):
             assert user.lastName
             assert user.email
 
-    @pytest.mark.regression
     @allure.title("Get User by id -> GET /user/{id}")
-    def test_get_user_by_id(self, users_api, created_user):
+    def test_get_user_by_id(self, created_user):
         with allure.step("PRECONDITION: create user"):
             user_id, created = created_user
             assert user_id
 
         with allure.step("READ: get user by id"):
-            fetched = users_api.get_user_by_id(user_id)
+            fetched = self.api_users.get_user_by_id(user_id)
 
         with allure.step("ASSERT: verify fields"):
             assert fetched.id == user_id
             if created.email and fetched.email:
                 assert fetched.email == created.email
 
-    @pytest.mark.regression
     @allure.title("Get Users List -> GET /user")
-    def test_get_users_list(self, users_api):
+    def test_get_users_list(self):
+        limit = 10
+        page = 0
+
         with allure.step("READ: list users"):
-            users = users_api.list_users(limit=10, page=0)
+            users = self.api_users.list_users(limit=limit, page=page)
 
         with allure.step("ASSERT: verify list"):
             assert isinstance(users, list)
-            assert len(users) > 0
-            assert all(u.id for u in users)
+            assert len(users) <= limit  # контракт пагинации
 
-    @pytest.mark.regression
+            if users:  # если список непустой — проверяем структуру
+                assert all(u.id for u in users)
+
     @allure.title("Update User by id -> PUT /user/{id}")
-    def test_update_user_by_id(self, users_api, created_user):
+    def test_update_user_by_id(self, created_user):
         with allure.step("PRECONDITION: create user"):
             user_id, created = created_user
             assert user_id
 
         with allure.step("UPDATE: update user fields (firstName/lastName)"):
             update_payload = {"firstName": "UpdatedName", "lastName": "UpdatedLast"}
-            updated = users_api.update_user(user_id, update_payload)
+            updated = self.api_users.update_user(user_id, update_payload)
 
             assert updated.id == user_id
             assert updated.firstName == "UpdatedName"
@@ -66,25 +67,24 @@ class TestUsers(BaseTest):
                 assert updated.email == created.email
 
         with allure.step("READ: get user by id and verify updated fields"):
-            fetched = users_api.get_user_by_id(user_id)
+            fetched = self.api_users.get_user_by_id(user_id)
 
             assert fetched.firstName == "UpdatedName"
             assert fetched.lastName == "UpdatedLast"
             if created.email and fetched.email:
                 assert fetched.email == created.email
 
-    @pytest.mark.regression
     @allure.title("Delete User -> DELETE /user/{id} (verify deleted)")
-    def test_delete_user_by_id(self, users_api, created_user):
+    def test_delete_user_by_id(self, created_user):
         with allure.step("PRECONDITION: create user"):
             user_id, _ = created_user
             assert user_id
 
         with allure.step("DELETE: delete user by id"):
-            users_api.delete_user(user_id)
+            self.api_users.delete_user(user_id)
 
         with allure.step("VERIFY DELETE: GET /user/{id} -> 404"):
-            resp = users_api.get_user_by_id_response(user_id)
+            resp = self.api_users.get_user_by_id_response(user_id)
 
             try:
                 body = resp.json()

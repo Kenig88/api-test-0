@@ -29,10 +29,6 @@ x-base: &base
     # HOST — базовый URL тестируемого API
     HOST: ${HOST:?HOST is required}
 
-    # DummyAPI требует заголовок app-id.
-    # В проекте APP_ID берём из API_TOKEN (как ты настроила).
-    APP_ID: ${API_TOKEN:?API_TOKEN is required}
-
     # API_TOKEN — токен/ключ доступа (в DummyAPI он же app-id)
     API_TOKEN: ${API_TOKEN:?API_TOKEN is required}
 
