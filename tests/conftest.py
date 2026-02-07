@@ -1,6 +1,7 @@
 import os  # работа с переменными окружения (ENV), например HOST и API_TOKEN
 import pytest  # pytest: фикстуры, тесты, ассерты
 import requests  # HTTP-клиент (мы будем делать запросы в API)
+from utils.raw_http import RawHttp
 from pathlib import Path  # удобная работа с путями к файлам
 from dotenv import load_dotenv  # загрузка переменных из .env файла в окружение
 
@@ -64,8 +65,8 @@ def http(api_token: str) -> requests.Session:
 
     # headers.update добавляет дефолтные заголовки ко всем запросам этой session
     session.headers.update({
-        "app-id": api_token,             # авторизация/идентификатор приложения для API
-        "Accept": "application/json",    # ожидаем ответ в JSON
+        "app-id": api_token,  # авторизация/идентификатор приложения для API
+        "Accept": "application/json",  # ожидаем ответ в JSON
         "Content-Type": "application/json",  # обычно нужен для POST/PUT с JSON
     })
 
@@ -95,7 +96,6 @@ def env_check(http: requests.Session, base_url: str):
 # =======================================================USERS==========================================================
 # ======================================================================================================================
 # =======================================================USERS==========================================================
-
 
 @pytest.fixture(scope="session")
 def user_endpoints(base_url: str) -> UserEndpoints:
@@ -163,7 +163,6 @@ def created_user(user_factory):
 # ======================================================================================================================
 # =======================================================POSTS==========================================================
 
-
 @pytest.fixture(scope="session")
 def post_endpoints(base_url: str) -> PostEndpoints:
     """Объект с URL'ами для постов."""
@@ -212,10 +211,9 @@ def created_post(post_factory):
     return post_factory()
 
 
-# ======================================================COMMENTS=========================================================
-# =======================================================================================================================
-# ======================================================COMMENTS=========================================================
-
+# ======================================================COMMENTS========================================================
+# ======================================================================================================================
+# ======================================================COMMENTS========================================================
 
 @pytest.fixture(scope="session")
 def comment_endpoints(base_url: str) -> CommentEndpoints:
@@ -268,3 +266,29 @@ def comment_factory(comments_api: CommentsAPI, post_factory, user_factory):
 def created_comment(comment_factory):
     """Один комментарий на тест (возвращает (comment_id, comment))."""
     return comment_factory()
+
+
+# ===============================================ДЛЯ=НЕГАТИВНЫХ=ТЕСТОВ==================================================
+# ======================================================================================================================
+# ===============================================ДЛЯ=НЕГАТИВНЫХ=ТЕСТОВ==================================================
+
+
+@pytest.fixture
+def raw_users(users_api):
+    raw = RawHttp(timeout=DEFAULT_TIMEOUT, attach=users_api.attach_response_safe)
+    yield raw
+    raw.close()
+
+
+@pytest.fixture
+def raw_posts(posts_api):
+    raw = RawHttp(timeout=DEFAULT_TIMEOUT, attach=posts_api.attach_response_safe)
+    yield raw
+    raw.close()
+
+
+@pytest.fixture
+def raw_comments(comments_api):
+    raw = RawHttp(timeout=DEFAULT_TIMEOUT, attach=comments_api.attach_response_safe)
+    yield raw
+    raw.close()

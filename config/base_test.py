@@ -1,5 +1,4 @@
 import pytest  # подключаем библиотеку pytest (фреймворк для запуска тестов и фикстур)
-
 # Импортируем классы-клиенты для работы с разными частями API
 # (обычно это обёртки над HTTP-запросами: get/post/put/delete)
 from services.posts.api_posts import PostsAPI

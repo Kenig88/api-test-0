@@ -57,89 +57,177 @@ services:
     <<: *base
 
     # command выполняется внутри контейнера.
-    # Мы используем sh -c '...' чтобы выполнить несколько команд подряд.
-    command: >
-      sh -c '
-        # Чистим результаты предыдущего прогона.
-        # Это важно, чтобы новый отчёт не смешивался со старым.
-        rm -rf allure-results;
-        mkdir -p allure-results;
+    command: ["pytest", "-sv", "--alluredir=allure-results", "--clean-alluredir"]
 
-        # Запускаем pytest и перечисляем конкретные файлы тестов.
-        # -s: показывать print/logs в консоли
-        # -v: более подробный вывод
-        # --alluredir=allure-results: сохраняем "сырые" результаты Allure в папку allure-results
-        pytest -sv \
-          tests/users/test_users_crud.py \
-          tests/posts/test_post_crud.py \
-          tests/comments/test_comments_crud.py \
-          tests/users/test_users_regression.py \
-          tests/posts/test_post_regression.py \
-          tests/comments/test_comments_regression.py \
-          tests/users/test_users_negative.py \
-          tests/posts/test_post_negative.py \
-          tests/comments/test_comments_negative.py \
-          --alluredir=allure-results;
 
-        # Возвращаем exit code pytest наружу.
-        # Если тесты упали, GitHub Actions увидит ошибку (но дальше всё равно построит отчёт,
-        # потому что в workflow на шагах Allure стоит if: always()).
-        exit $?
-      '
 
   # ------------------------------------------------------------
   # smoke — быстрый прогон: только CRUD-набор
   # ------------------------------------------------------------
   smoke:
     <<: *base
-    command: >
-      sh -c '
-        rm -rf allure-results;
-        mkdir -p allure-results;
+    command: ["pytest", "-sv", "-m", "smoke", "--alluredir=allure-results", "--clean-alluredir"]
 
-        pytest -sv \
-          tests/users/test_users_crud.py \
-          tests/posts/test_post_crud.py \
-          tests/comments/test_comments_crud.py \
-          --alluredir=allure-results;
-
-        exit $?
-      '
 
   # ------------------------------------------------------------
   # regression — регрессионные тесты (дольше, чем smoke)
   # ------------------------------------------------------------
   regression:
     <<: *base
-    command: >
-      sh -c '
-        rm -rf allure-results;
-        mkdir -p allure-results;
-
-        pytest -sv \
-          tests/users/test_users_regression.py \
-          tests/posts/test_post_regression.py \
-          tests/comments/test_comments_regression.py \
-          --alluredir=allure-results;
-
-        exit $?
-      '
+    command: ["pytest", "-sv", "-m", "regression", "--alluredir=allure-results", "--clean-alluredir"]
 
   # ------------------------------------------------------------
   # negative — негативные тесты (валидации/ошибки/невалидные данные)
   # ------------------------------------------------------------
   negative:
     <<: *base
-    command: >
-      sh -c '
-        rm -rf allure-results;
-        mkdir -p allure-results;
+    command: ["pytest", "-sv", "-m", "negative", "--alluredir=allure-results", "--clean-alluredir"]
 
-        pytest -sv \
-          tests/users/test_users_negative.py \
-          tests/posts/test_post_negative.py \
-          tests/comments/test_comments_negative.py \
-          --alluredir=allure-results;
 
-        exit $?
-      '
+
+
+## docker-compose.yml
+## Здесь мы описываем сервисы (контейнеры), которые запускают разные наборы тестов.
+## ВАЖНО: контейнеры НЕ генерируют HTML Allure-отчёт.
+## Они только запускают pytest и создают "сырые" результаты в папку allure-results/.
+## А уже GitHub Actions по этим результатам строит HTML + историю и публикует на Pages.
+#
+## --------------------------------------------
+## Общий шаблон (anchor) для всех сервисов
+## --------------------------------------------
+## x-base — это "шаблон" (не сервис), его нельзя запустить напрямую.
+## Он нужен, чтобы не копипастить одинаковые настройки в all/smoke/regression/negative.
+#x-base: &base
+#
+#  # build: . — собрать Docker-образ из Dockerfile в текущей папке проекта
+#  build: .
+#
+#  # volumes:
+#  #  - .:/usr/workspace
+#  #
+#  # Монтируем текущую папку проекта (на хосте) внутрь контейнера.
+#  # Это ключевая вещь:
+#  # - контейнер видит твой код/тесты как /usr/workspace
+#  # - все файлы, которые контейнер создаст в /usr/workspace, появятся на хосте тоже
+#  #
+#  # Поэтому allure-results/ создаётся "в репозитории" (на раннере/локально),
+#  # хотя пишет её контейнер.
+#  volumes:
+#    - .:/usr/workspace
+#
+#  # working_dir — папка, из которой выполняются команды внутри контейнера.
+#  working_dir: /usr/workspace
+#
+#  # environment — переменные окружения, которые нужны тестам.
+#  # Мы берём их с хоста/CI. Если их нет — docker compose сразу упадёт с понятной ошибкой.
+#  environment:
+#    # HOST — базовый URL/хост API, с которым работают тесты
+#    HOST: ${HOST:?HOST is required}
+#
+#    # DummyAPI требует заголовок app-id (APP_ID).
+#    # Мы используем значение API_TOKEN как APP_ID (как ты и настроил).
+#    APP_ID: ${API_TOKEN:?API_TOKEN is required}
+#
+#    # API_TOKEN — токен (или app-id), который нужен тестам для запросов
+#    API_TOKEN: ${API_TOKEN:?API_TOKEN is required}
+#
+#
+## --------------------------------------------
+## Сервисы (то, что реально можно запускать)
+## --------------------------------------------
+#services:
+#
+#  # ------------------------------------------------------------
+#  # all — запускает сразу ВСЕ наборы тестов одним прогоном pytest
+#  # ------------------------------------------------------------
+#  all:
+#    # <<: *base — "влить" все настройки из шаблона x-base
+#    <<: *base
+#
+#    # command выполняется внутри контейнера.
+#    # Мы используем sh -c '...' чтобы выполнить несколько команд подряд.
+#    command: >
+#      sh -c '
+#        # Чистим результаты предыдущего прогона.
+#        # Это важно, чтобы новый отчёт не смешивался со старым.
+#        rm -rf allure-results;
+#        mkdir -p allure-results;
+#
+#        # Запускаем pytest и перечисляем конкретные файлы тестов.
+#        # -s: показывать print/logs в консоли
+#        # -v: более подробный вывод
+#        # --alluredir=allure-results: сохраняем "сырые" результаты Allure в папку allure-results
+#        pytest -sv \
+#          tests/users/test_users_crud.py \
+#          tests/posts/test_post_crud.py \
+#          tests/comments/test_comments_crud.py \
+#          tests/users/test_users_regression.py \
+#          tests/posts/test_post_regression.py \
+#          tests/comments/test_comments_regression.py \
+#          tests/users/test_users_negative.py \
+#          tests/posts/test_post_negative.py \
+#          tests/comments/test_comments_negative.py \
+#          --alluredir=allure-results;
+#
+#        # Возвращаем exit code pytest наружу.
+#        # Если тесты упали, GitHub Actions увидит ошибку (но дальше всё равно построит отчёт,
+#        # потому что в workflow на шагах Allure стоит if: always()).
+#        exit $?
+#      '
+#
+#  # ------------------------------------------------------------
+#  # smoke — быстрый прогон: только CRUD-набор
+#  # ------------------------------------------------------------
+#  smoke:
+#    <<: *base
+#    command: >
+#      sh -c '
+#        rm -rf allure-results;
+#        mkdir -p allure-results;
+#
+#        pytest -sv \
+#          tests/users/test_users_crud.py \
+#          tests/posts/test_post_crud.py \
+#          tests/comments/test_comments_crud.py \
+#          --alluredir=allure-results;
+#
+#        exit $?
+#      '
+#
+#  # ------------------------------------------------------------
+#  # regression — регрессионные тесты (дольше, чем smoke)
+#  # ------------------------------------------------------------
+#  regression:
+#    <<: *base
+#    command: >
+#      sh -c '
+#        rm -rf allure-results;
+#        mkdir -p allure-results;
+#
+#        pytest -sv \
+#          tests/users/test_users_regression.py \
+#          tests/posts/test_post_regression.py \
+#          tests/comments/test_comments_regression.py \
+#          --alluredir=allure-results;
+#
+#        exit $?
+#      '
+#
+#  # ------------------------------------------------------------
+#  # negative — негативные тесты (валидации/ошибки/невалидные данные)
+#  # ------------------------------------------------------------
+#  negative:
+#    <<: *base
+#    command: >
+#      sh -c '
+#        rm -rf allure-results;
+#        mkdir -p allure-results;
+#
+#        pytest -sv \
+#          tests/users/test_users_negative.py \
+#          tests/posts/test_post_negative.py \
+#          tests/comments/test_comments_negative.py \
+#          --alluredir=allure-results;
+#
+#        exit $?
+#      '

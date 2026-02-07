@@ -6,9 +6,9 @@ from config.base_test import BaseTest
 
 @allure.epic("Administration")
 @allure.feature("Users")
-@pytest.mark.regression
 class TestUsers(BaseTest):
 
+    @pytest.mark.regression
     @allure.title("Create User -> POST /user/create")
     def test_create_user(self, created_user):
         user_id, user = created_user
@@ -20,6 +20,7 @@ class TestUsers(BaseTest):
             assert user.lastName
             assert user.email
 
+    @pytest.mark.regression
     @allure.title("Get User by id -> GET /user/{id}")
     def test_get_user_by_id(self, users_api, created_user):
         with allure.step("PRECONDITION: create user"):
@@ -34,6 +35,7 @@ class TestUsers(BaseTest):
             if created.email and fetched.email:
                 assert fetched.email == created.email
 
+    @pytest.mark.regression
     @allure.title("Get Users List -> GET /user")
     def test_get_users_list(self, users_api):
         with allure.step("READ: list users"):
@@ -44,6 +46,7 @@ class TestUsers(BaseTest):
             assert len(users) > 0
             assert all(u.id for u in users)
 
+    @pytest.mark.regression
     @allure.title("Update User by id -> PUT /user/{id}")
     def test_update_user_by_id(self, users_api, created_user):
         with allure.step("PRECONDITION: create user"):
@@ -70,6 +73,7 @@ class TestUsers(BaseTest):
             if created.email and fetched.email:
                 assert fetched.email == created.email
 
+    @pytest.mark.regression
     @allure.title("Delete User -> DELETE /user/{id} (verify deleted)")
     def test_delete_user_by_id(self, users_api, created_user):
         with allure.step("PRECONDITION: create user"):

@@ -8,7 +8,6 @@ from config.base_test import BaseTest
 @pytest.mark.regression
 class TestComments(BaseTest):
 
-    @pytest.mark.regression
     @allure.title("Create Comment -> POST /comment/create")
     def test_create_comment(self, created_user, post_factory, comment_factory):
         user_id, _ = created_user
@@ -26,7 +25,6 @@ class TestComments(BaseTest):
             assert comment.owner.id == user_id
             assert comment.post == post_id
 
-    @pytest.mark.regression
     @allure.title("Get Comments List -> GET /comment")
     def test_get_comments_list(self):
         with allure.step("READ: list comments"):
@@ -36,7 +34,6 @@ class TestComments(BaseTest):
             # минимальные sanity-checks по модели превью
             assert all(c.id for c in comments)
 
-    @pytest.mark.regression
     @allure.title("Get Comments By Post -> GET /post/{post_id}/comment")
     def test_get_list_comments_by_post(self, created_user, post_factory, comment_factory):
         user_id, _ = created_user
@@ -53,7 +50,6 @@ class TestComments(BaseTest):
             comments = self.api_comments.list_comments_by_post(post_id=post_id, limit=50, page=0)
             assert comment_id in [c.id for c in comments]
 
-    @pytest.mark.regression
     @allure.title("Get Comments By User -> GET /user/{user_id}/comment")
     def test_get_list_comments_by_user(self, created_user, post_factory, comment_factory):
         user_id, _ = created_user
@@ -70,7 +66,6 @@ class TestComments(BaseTest):
             comments = self.api_comments.list_comments_by_user(user_id=user_id, limit=50, page=0)
             assert comment_id in [c.id for c in comments]
 
-    @pytest.mark.regression
     @allure.title("Delete Comment -> DELETE /comment/{id} (verify deleted)")
     def test_delete_comment(self, created_user, post_factory, comment_factory):
         user_id, _ = created_user

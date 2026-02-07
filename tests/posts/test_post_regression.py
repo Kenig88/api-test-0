@@ -6,9 +6,9 @@ from services.posts.post_payloads import PostPayloads
 
 @allure.epic("Administration")
 @allure.feature("Posts")
+@pytest.mark.regression
 class TestPosts(BaseTest):
 
-    @pytest.mark.regression
     @allure.title("Create Post -> POST /post/create")
     def test_create_post(self, created_user, post_factory):
         user_id, _ = created_user
@@ -21,7 +21,6 @@ class TestPosts(BaseTest):
             assert post.owner is not None
             assert post.owner.id == user_id
 
-    @pytest.mark.regression
     @allure.title("Get Post by id -> GET /post/{id}")
     def test_get_post_by_id(self, created_user, post_factory):
         user_id, _ = created_user
@@ -39,7 +38,6 @@ class TestPosts(BaseTest):
             assert fetched.owner is not None
             assert fetched.owner.id == user_id
 
-    @pytest.mark.regression
     @allure.title("Update Post -> PUT /post/{id}")
     def test_update_post(self, created_user, post_factory):
         user_id, _ = created_user
@@ -65,7 +63,6 @@ class TestPosts(BaseTest):
             assert fetched.owner is not None
             assert fetched.owner.id == user_id  # owner нельзя обновлять
 
-    @pytest.mark.regression
     @allure.title("Delete Post -> DELETE /post/{id} (verify GET 404)")
     def test_delete_post(self, created_user, post_factory):
         user_id, _ = created_user
@@ -82,7 +79,6 @@ class TestPosts(BaseTest):
             resp = self.api_posts.get_post_by_id_response(post_id)
             assert resp.status_code == 404, resp.text
 
-    @pytest.mark.regression
     @allure.title("Get Posts List -> GET /post")
     def test_get_list(self):
         with allure.step("READ: list posts"):
@@ -92,7 +88,6 @@ class TestPosts(BaseTest):
             assert len(posts) > 0
             assert all(p.id for p in posts)
 
-    @pytest.mark.regression
     @allure.title("Get List By User -> GET /user/{user_id}/post (contains created post)")
     def test_get_list_by_user(self, created_user, post_factory):
         user_id, _ = created_user
