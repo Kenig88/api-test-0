@@ -1,0 +1,15 @@
+{
+    "id": "6987815bd666b79e6ba794ff",
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+    "likes": 123,
+    "link": "",
+    "tags": [],
+    "text": "Updated post text",
+    "publishDate": "2026-02-07T18:15:55.512Z",
+    "updatedDate": "2026-02-07T18:15:55.892Z",
+    "owner": {
+        "id": "6987815bc3be2d4704e8bbf4",
+        "firstName": "Jesus",
+        "lastName": "Cole"
+    }
+}

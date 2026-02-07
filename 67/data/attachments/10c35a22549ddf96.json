@@ -1,0 +1,12 @@
+{
+    "method": "GET",
+    "url": "https://dummyapi.io/data/v1/post/123/comment?limit=10&page=0",
+    "headers": {
+        "User-Agent": "python-requests/2.32.5",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "app-id": "***"
+    },
+    "body": null
+}

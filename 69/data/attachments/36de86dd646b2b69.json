@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "69878222c3be2d8317e8bc2f",
+            "message": "Auto comment 7e100876",
+            "owner": {
+                "id": "69878222d666b75e23a79527",
+                "firstName": "Ethan",
+                "lastName": "Valdez"
+            },
+            "post": "69878222ebb9286c5ff47b55",
+            "publishDate": "2026-02-07T18:19:14.592Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

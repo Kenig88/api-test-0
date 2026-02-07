@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "69864f54d33fcb0ab70e5a59",
+            "message": "Auto comment 842134ec",
+            "owner": {
+                "id": "69864f544d8342383b1450aa",
+                "firstName": "Elizabeth",
+                "lastName": "Ferguson"
+            },
+            "post": "69864f54d33fcba8fd0e5a53",
+            "publishDate": "2026-02-06T20:30:12.404Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

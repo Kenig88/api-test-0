@@ -1,0 +1,21 @@
+{
+    "data": [
+        {
+            "id": "69864f4a4d8342fb1c14509b",
+            "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+            "likes": 0,
+            "tags": [],
+            "text": "Auto post 9c650a66",
+            "publishDate": "2026-02-06T20:30:02.786Z",
+            "updatedDate": "2026-02-06T20:30:02.786Z",
+            "owner": {
+                "id": "69864f4ad33fcb9eea0e5a46",
+                "firstName": "Stacy",
+                "lastName": "Moore"
+            }
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

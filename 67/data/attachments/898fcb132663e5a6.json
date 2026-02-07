@@ -1,0 +1,20 @@
+{
+    "method": "POST",
+    "url": "https://dummyapi.io/data/v1/user/create",
+    "headers": {
+        "User-Agent": "python-requests/2.32.5",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "app-id": "***",
+        "Content-Type": "application/json",
+        "Content-Length": "165"
+    },
+    "body_json": {
+        "email": "autotest_8bb15c21cf7344848c3e81f1489b7d7e@example.com",
+        "firstName": "James",
+        "lastName": "Patton",
+        "dateOfBirth": "1934-01-14",
+        "phone": "4497222671765"
+    }
+}

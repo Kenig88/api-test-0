@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","831","User flow (CREATE -> GET by id -> UPDATE -> GET by id -> DELETE -> GET 404)","tests.users","Fri Feb 06 20:28:43 UTC 2026","passed","Fri Feb 06 20:28:43 UTC 2026","TestUsers","test_users_crud","",""
+"","904","Comment flow (CREATE -> LIST by post -> LIST by user -> DELETE -> verify deleted)","tests.comments","Fri Feb 06 20:28:45 UTC 2026","passed","Fri Feb 06 20:28:46 UTC 2026","TestComments","test_comments_crud","",""
+"","846","Post flow (CREATE -> GET by id -> UPDATE -> GET by id -> DELETE -> GET 404)","tests.posts","Fri Feb 06 20:28:44 UTC 2026","passed","Fri Feb 06 20:28:45 UTC 2026","TestPosts","test_post_crud","",""

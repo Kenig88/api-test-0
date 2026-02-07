@@ -1,0 +1,22 @@
+{
+    "status_code": 404,
+    "headers": {
+        "Connection": "keep-alive",
+        "Content-Length": "30",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=600",
+        "Content-Type": "application/json; charset=utf-8",
+        "Etag": "W/\"1e-hQ3POqBPvsvSwNKcIR2tnEBMEfg\"",
+        "Function-Execution-Id": "0dw422wybwdc",
+        "Server": "Google Frontend",
+        "X-Cloud-Trace-Context": "88873d909db17fb335a20330137031d7",
+        "Accept-Ranges": "bytes",
+        "Date": "Sat, 07 Feb 2026 18:15:56 GMT",
+        "X-Served-By": "cache-iad-kiad7000179-IAD",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "X-Timer": "S1770488156.366202,VS0,VE81",
+        "Vary": "x-fh-requested-host, accept-encoding",
+        "alt-svc": "h3=\":443\";ma=86400,h3-29=\":443\";ma=86400,h3-27=\":443\";ma=86400"
+    }
+}

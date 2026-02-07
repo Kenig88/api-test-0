@@ -1,0 +1,117 @@
+{
+    "data": [
+        {
+            "id": "6985fcdae2788f1f39480b73",
+            "message": "oh, thats cool",
+            "owner": {
+                "id": "6985fb1e28181912e6e02560",
+                "firstName": "Pavel",
+                "lastName": "Madd"
+            },
+            "post": "6985fbf628181929f0e02566",
+            "publishDate": "2026-02-06T14:38:18.596Z"
+        },
+        {
+            "id": "698577485a754d30c96c3fd1",
+            "message": "ololocomment",
+            "owner": {
+                "id": "698576745a754d81386c3fc1",
+                "firstName": "Banana",
+                "lastName": "Mama"
+            },
+            "post": "698576e1266b539e20db28ee",
+            "publishDate": "2026-02-06T05:08:24.216Z"
+        },
+        {
+            "id": "6984cde372f3af3992f04b04",
+            "message": "labuba3",
+            "owner": {
+                "id": "6984ca82744e1318044b6045",
+                "firstName": "AlexTest1",
+                "lastName": "QAtest1"
+            },
+            "post": "6984cb1c744e1391544b604b",
+            "publishDate": "2026-02-05T17:05:39.122Z"
+        },
+        {
+            "id": "6982c614f1d772df6f4ead00",
+            "message": "commentik 999",
+            "owner": {
+                "id": "6982c472fb8cb16ea9f4c89f",
+                "firstName": "jeremys",
+                "lastName": "scottis"
+            },
+            "post": "6982c600fb8cb1b605f4c8ad",
+            "publishDate": "2026-02-04T04:07:48.467Z"
+        },
+        {
+            "id": "6982c23cfb8cb156faf4c837",
+            "message": "commentik 999",
+            "owner": {
+                "id": "6982c190f7497960bea4cf4f",
+                "firstName": "jeremy",
+                "lastName": "scott"
+            },
+            "post": "6982c1b4f1d772b2ec4eac82",
+            "publishDate": "2026-02-04T03:51:24.869Z"
+        },
+        {
+            "id": "6981f2c211da27865883133a",
+            "message": "Auto comment ebf93182",
+            "owner": {
+                "id": "6981f2c111da2722a2831334",
+                "firstName": "Anthony",
+                "lastName": "Kim"
+            },
+            "post": "6981f2c25581116208fae8ae",
+            "publishDate": "2026-02-03T13:06:10.446Z"
+        },
+        {
+            "id": "6981ba87643ba03cc481bb69",
+            "message": "TestComment",
+            "owner": {
+                "id": "6981b0a871467c890811b695",
+                "firstName": "Alex",
+                "lastName": "QATeam"
+            },
+            "post": "6981b9dfcb4f0b721fa219a9",
+            "publishDate": "2026-02-03T09:06:15.946Z"
+        },
+        {
+            "id": "698096c0b7d54cc85e8ce50b",
+            "message": "comment",
+            "owner": {
+                "id": "698096bbc8b0b6308f1b8f3c",
+                "firstName": "Ezequiel",
+                "lastName": "Runte"
+            },
+            "post": "698096bebbee4321a2c1c26e",
+            "publishDate": "2026-02-02T12:21:20.743Z"
+        },
+        {
+            "id": "6980965b1b1b3b41bffa8b54",
+            "message": "comment",
+            "owner": {
+                "id": "697db1e405b46796013c91b9",
+                "firstName": "Alex",
+                "lastName": "QA"
+            },
+            "post": "697db21005b46793d33c91bf",
+            "publishDate": "2026-02-02T12:19:39.997Z"
+        },
+        {
+            "id": "6980954db7d54c00888ce4e1",
+            "message": "comment",
+            "owner": {
+                "id": "697db1e405b46796013c91b9",
+                "firstName": "Alex",
+                "lastName": "QA"
+            },
+            "post": "697db21005b46793d33c91bf",
+            "publishDate": "2026-02-02T12:15:09.050Z"
+        }
+    ],
+    "total": 1609,
+    "page": 0,
+    "limit": 10
+}

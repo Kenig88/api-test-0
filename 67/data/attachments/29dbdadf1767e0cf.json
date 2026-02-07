@@ -1,0 +1,166 @@
+{
+    "data": [
+        {
+            "id": "69876e12ae20e748e2374bf1",
+            "image": "https://randomuser.me/api/portraits/med/women/18.jpg",
+            "likes": 1000,
+            "tags": [
+                "qa"
+            ],
+            "text": "text",
+            "publishDate": "2026-02-07T16:53:38.724Z",
+            "updatedDate": "2026-02-07T16:53:38.724Z",
+            "owner": {
+                "id": "69876d6dae20e7094f374beb",
+                "firstName": "alex",
+                "lastName": "QA"
+            }
+        },
+        {
+            "id": "698754ad253fd820bbaf9385",
+            "image": "",
+            "likes": 10,
+            "tags": [],
+            "text": "This user cool1",
+            "publishDate": "2026-02-07T15:05:17.839Z",
+            "updatedDate": "2026-02-07T15:05:17.839Z",
+            "owner": {
+                "id": "698751c5253fd869c5af926b",
+                "firstName": "Igor",
+                "lastName": "Ivanov"
+            }
+        },
+        {
+            "id": "6987371dcf801d4fe57c07cc",
+            "image": "https://randomuser.me/api/portraits/med/women/18.jpg",
+            "likes": 1000,
+            "tags": [
+                "qa"
+            ],
+            "text": "test",
+            "publishDate": "2026-02-07T12:59:09.959Z",
+            "updatedDate": "2026-02-07T12:59:09.959Z",
+            "owner": {
+                "id": "698731fbcf801d164e7c07b9",
+                "firstName": "Alex Brain",
+                "lastName": "QA Test",
+                "picture": "https://dummyimage.com/120x120/000/fff"
+            }
+        },
+        {
+            "id": "6986e8d36bb40ff1962d32e7",
+            "image": "https://randomuser.me/api/portraits/med/men/9.jpg",
+            "likes": 1000,
+            "tags": [
+                "ii"
+            ],
+            "text": "text2",
+            "publishDate": "2026-02-07T07:25:07.966Z",
+            "updatedDate": "2026-02-07T07:25:07.966Z",
+            "owner": {
+                "id": "6986e8c36bb40f53342d32cc",
+                "firstName": "Sofia",
+                "lastName": "Kalinina"
+            }
+        },
+        {
+            "id": "6986e8bfd5442c31afa9fcad",
+            "image": "https://randomuser.me/api/portraits/med/women/18.jpg",
+            "likes": 1000,
+            "tags": [
+                "qa"
+            ],
+            "text": "Aboba",
+            "publishDate": "2026-02-07T07:24:47.273Z",
+            "updatedDate": "2026-02-07T07:24:47.273Z",
+            "owner": {
+                "id": "6986e8bd6bb40f1da82d32b4",
+                "firstName": "Evelina",
+                "lastName": "Ryzhikovaaaa"
+            }
+        },
+        {
+            "id": "6986e7866bb40f9f9e2d31fc",
+            "image": "https://randomuser.me/api/portraits/med/men/61.jpg",
+            "likes": 1000,
+            "tags": [
+                "QA"
+            ],
+            "text": "necwefr",
+            "publishDate": "2026-02-07T07:19:34.354Z",
+            "updatedDate": "2026-02-07T07:19:34.354Z",
+            "owner": {
+                "id": "6986d82f6bb40f5cab2d2ffe",
+                "firstName": "Alex",
+                "lastName": "QA"
+            }
+        },
+        {
+            "id": "6986e7520e909c53bf1ac147",
+            "image": "https://randomuser.me/api/portraits/med/men/61.jpg",
+            "likes": 1000,
+            "tags": [
+                "QA"
+            ],
+            "text": "necwefr",
+            "publishDate": "2026-02-07T07:18:42.754Z",
+            "updatedDate": "2026-02-07T07:18:42.754Z",
+            "owner": {
+                "id": "6986d82f6bb40f5cab2d2ffe",
+                "firstName": "Alex",
+                "lastName": "QA"
+            }
+        },
+        {
+            "id": "6986e71c24003c56e631cf38",
+            "image": "https://randomuser.me/api/portraits/med/men/61.jpg",
+            "likes": 1000,
+            "tags": [
+                "QA"
+            ],
+            "text": "necwefr",
+            "publishDate": "2026-02-07T07:17:48.621Z",
+            "updatedDate": "2026-02-07T07:17:48.621Z",
+            "owner": {
+                "id": "6986d82f6bb40f5cab2d2ffe",
+                "firstName": "Alex",
+                "lastName": "QA"
+            }
+        },
+        {
+            "id": "6986e6ff24003c082231cf0f",
+            "image": "https://randomuser.me/api/portraits/med/men/61.jpg",
+            "likes": 1000,
+            "tags": [
+                "QA"
+            ],
+            "text": "necwefr",
+            "publishDate": "2026-02-07T07:17:19.875Z",
+            "updatedDate": "2026-02-07T07:17:19.875Z",
+            "owner": {
+                "id": "6986d82f6bb40f5cab2d2ffe",
+                "firstName": "Alex",
+                "lastName": "QA"
+            }
+        },
+        {
+            "id": "6986e6aa0e909c51361ac10e",
+            "image": "https://randomuser.me/api/portraits/med/men/61.jpg",
+            "likes": 1000,
+            "tags": [
+                "QA"
+            ],
+            "text": "necwefr",
+            "publishDate": "2026-02-07T07:15:54.445Z",
+            "updatedDate": "2026-02-07T07:15:54.445Z",
+            "owner": {
+                "id": "6986d82f6bb40f5cab2d2ffe",
+                "firstName": "Alex",
+                "lastName": "QA"
+            }
+        }
+    ],
+    "total": 5265,
+    "page": 0,
+    "limit": 10
+}

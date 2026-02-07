@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "69862114e2788feb3b4812dc",
+            "message": "Auto comment 5fb1e77a",
+            "owner": {
+                "id": "698621132818198d4de02c64",
+                "firstName": "Melanie",
+                "lastName": "Patterson"
+            },
+            "post": "69862114e2788f69214812d6",
+            "publishDate": "2026-02-06T17:12:52.201Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

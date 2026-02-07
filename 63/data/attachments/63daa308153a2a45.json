@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "69864e88ce2b8844a7b6f025",
+            "message": "Auto comment 22db9b6e",
+            "owner": {
+                "id": "69864e874d83420f45145053",
+                "firstName": "Jerry",
+                "lastName": "Lynch"
+            },
+            "post": "69864e875bddc895e7136526",
+            "publishDate": "2026-02-06T20:26:48.051Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

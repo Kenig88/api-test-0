@@ -1,0 +1,167 @@
+{
+    "data": [
+        {
+            "id": "6986295ce2788fc502481321",
+            "image": "https://randomuser.me/api/portraits/med/women/32.jpg",
+            "likes": 10002,
+            "tags": [
+                "qaaaaa"
+            ],
+            "text": "text1488",
+            "publishDate": "2026-02-06T17:48:12.804Z",
+            "updatedDate": "2026-02-06T17:48:12.804Z",
+            "owner": {
+                "id": "69862934e2788f62ea481315",
+                "firstName": "Noemi",
+                "lastName": "Spencer"
+            }
+        },
+        {
+            "id": "6986294ee2788f103748131b",
+            "image": "https://randomuser.me/api/portraits/med/women/32.jpg",
+            "likes": 10002,
+            "tags": [
+                "qaaaaa"
+            ],
+            "text": "0",
+            "publishDate": "2026-02-06T17:47:58.584Z",
+            "updatedDate": "2026-02-06T17:47:58.584Z",
+            "owner": {
+                "id": "69862934e2788f62ea481315",
+                "firstName": "Noemi",
+                "lastName": "Spencer"
+            }
+        },
+        {
+            "id": "69862947ce2b880986b6e6c8",
+            "image": "https://randomuser.me/api/portraits/med/women/32.jpg",
+            "likes": 10002,
+            "tags": [
+                "qaaaaa"
+            ],
+            "text": "",
+            "publishDate": "2026-02-06T17:47:51.464Z",
+            "updatedDate": "2026-02-06T17:47:51.464Z",
+            "owner": {
+                "id": "69862934e2788f62ea481315",
+                "firstName": "Noemi",
+                "lastName": "Spencer"
+            }
+        },
+        {
+            "id": "698629458ca1fd703356eead",
+            "image": "https://randomuser.me/api/portraits/med/women/32.jpg",
+            "likes": 10002,
+            "tags": [
+                "qaaaaa"
+            ],
+            "text": "",
+            "publishDate": "2026-02-06T17:47:49.792Z",
+            "updatedDate": "2026-02-06T17:47:49.792Z",
+            "owner": {
+                "id": "69862934e2788f62ea481315",
+                "firstName": "Noemi",
+                "lastName": "Spencer"
+            }
+        },
+        {
+            "id": "69862940c8fe09f1b80982af",
+            "image": "https://randomuser.me/api/portraits/med/women/32.jpg",
+            "likes": 10002,
+            "tags": [
+                "qaaaaa"
+            ],
+            "text": "text1488",
+            "publishDate": "2026-02-06T17:47:44.964Z",
+            "updatedDate": "2026-02-06T17:47:44.964Z",
+            "owner": {
+                "id": "69862934e2788f62ea481315",
+                "firstName": "Noemi",
+                "lastName": "Spencer"
+            }
+        },
+        {
+            "id": "698619902818190984e02b5e",
+            "image": "string(url)",
+            "likes": 6,
+            "tags": [
+                "3"
+            ],
+            "text": "Пандочка Бубу Самая Хорошая",
+            "publishDate": "2026-02-06T16:40:48.264Z",
+            "updatedDate": "2026-02-06T16:46:45.766Z",
+            "owner": {
+                "id": "698611f6e2788f68f5481152",
+                "firstName": "Бубу",
+                "lastName": "Пандочка"
+            }
+        },
+        {
+            "id": "6985fbf628181929f0e02566",
+            "image": "https://img.freepik.com/premium-photo/abstract-colorful-background-elegant-design-cover-modern-composition_1145931-59563.jpg?semt=ais_hybrid&w=740",
+            "likes": 12,
+            "tags": [
+                "paint"
+            ],
+            "text": "read my text pls",
+            "publishDate": "2026-02-06T14:34:30.279Z",
+            "updatedDate": "2026-02-06T14:34:30.279Z",
+            "owner": {
+                "id": "6985fb1e28181912e6e02560",
+                "firstName": "Pavel",
+                "lastName": "Madd"
+            }
+        },
+        {
+            "id": "6985fbe5ce2b887b93b6df92",
+            "image": "https://img.freepik.com/premium-photo/abstract-colorful-background-elegant-design-cover-modern-composition_1145931-59563.jpg?semt=ais_hybrid&w=740",
+            "likes": 12,
+            "tags": [
+                "paint"
+            ],
+            "text": "read my text pls",
+            "publishDate": "2026-02-06T14:34:13.777Z",
+            "updatedDate": "2026-02-06T14:34:13.777Z",
+            "owner": {
+                "id": "6985fb1e28181912e6e02560",
+                "firstName": "Pavel",
+                "lastName": "Madd"
+            }
+        },
+        {
+            "id": "6985fbdace2b8807f8b6df8c",
+            "image": "https://img.freepik.com/premium-photo/abstract-colorful-background-elegant-design-cover-modern-composition_1145931-59563.jpg?semt=ais_hybrid&w=740",
+            "likes": 12,
+            "tags": [
+                "paint"
+            ],
+            "text": "read my text pls",
+            "publishDate": "2026-02-06T14:34:02.769Z",
+            "updatedDate": "2026-02-06T14:34:02.769Z",
+            "owner": {
+                "id": "6985fb1e28181912e6e02560",
+                "firstName": "Pavel",
+                "lastName": "Madd"
+            }
+        },
+        {
+            "id": "69859770fda0192fe8892001",
+            "image": "https://randomuser.me/api/portraits/med/women/75.jpg",
+            "likes": 500,
+            "tags": [
+                "qa"
+            ],
+            "text": "text",
+            "publishDate": "2026-02-06T07:25:36.088Z",
+            "updatedDate": "2026-02-06T07:25:36.088Z",
+            "owner": {
+                "id": "698596b7bd4aa5bbb8987883",
+                "firstName": "AlexTest1",
+                "lastName": "QAtest1"
+            }
+        }
+    ],
+    "total": 5243,
+    "page": 0,
+    "limit": 10
+}

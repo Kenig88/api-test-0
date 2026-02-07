@@ -1,0 +1,167 @@
+{
+    "data": [
+        {
+            "id": "698619902818190984e02b5e",
+            "image": "string(url)",
+            "likes": 6,
+            "tags": [
+                "3"
+            ],
+            "text": "Пандочка Бубу Самая Хорошая",
+            "publishDate": "2026-02-06T16:40:48.264Z",
+            "updatedDate": "2026-02-06T16:46:45.766Z",
+            "owner": {
+                "id": "698611f6e2788f68f5481152",
+                "firstName": "Бубу",
+                "lastName": "Пандочка"
+            }
+        },
+        {
+            "id": "6985fbf628181929f0e02566",
+            "image": "https://img.freepik.com/premium-photo/abstract-colorful-background-elegant-design-cover-modern-composition_1145931-59563.jpg?semt=ais_hybrid&w=740",
+            "likes": 12,
+            "tags": [
+                "paint"
+            ],
+            "text": "read my text pls",
+            "publishDate": "2026-02-06T14:34:30.279Z",
+            "updatedDate": "2026-02-06T14:34:30.279Z",
+            "owner": {
+                "id": "6985fb1e28181912e6e02560",
+                "firstName": "Pavel",
+                "lastName": "Madd"
+            }
+        },
+        {
+            "id": "6985fbe5ce2b887b93b6df92",
+            "image": "https://img.freepik.com/premium-photo/abstract-colorful-background-elegant-design-cover-modern-composition_1145931-59563.jpg?semt=ais_hybrid&w=740",
+            "likes": 12,
+            "tags": [
+                "paint"
+            ],
+            "text": "read my text pls",
+            "publishDate": "2026-02-06T14:34:13.777Z",
+            "updatedDate": "2026-02-06T14:34:13.777Z",
+            "owner": {
+                "id": "6985fb1e28181912e6e02560",
+                "firstName": "Pavel",
+                "lastName": "Madd"
+            }
+        },
+        {
+            "id": "6985fbdace2b8807f8b6df8c",
+            "image": "https://img.freepik.com/premium-photo/abstract-colorful-background-elegant-design-cover-modern-composition_1145931-59563.jpg?semt=ais_hybrid&w=740",
+            "likes": 12,
+            "tags": [
+                "paint"
+            ],
+            "text": "read my text pls",
+            "publishDate": "2026-02-06T14:34:02.769Z",
+            "updatedDate": "2026-02-06T14:34:02.769Z",
+            "owner": {
+                "id": "6985fb1e28181912e6e02560",
+                "firstName": "Pavel",
+                "lastName": "Madd"
+            }
+        },
+        {
+            "id": "69859770fda0192fe8892001",
+            "image": "https://randomuser.me/api/portraits/med/women/75.jpg",
+            "likes": 500,
+            "tags": [
+                "qa"
+            ],
+            "text": "text",
+            "publishDate": "2026-02-06T07:25:36.088Z",
+            "updatedDate": "2026-02-06T07:25:36.088Z",
+            "owner": {
+                "id": "698596b7bd4aa5bbb8987883",
+                "firstName": "AlexTest1",
+                "lastName": "QAtest1"
+            }
+        },
+        {
+            "id": "698596c9bb34d8c17ab2f51f",
+            "image": "https://randomuser.me/api/portraits/med/women/75.jpg",
+            "likes": 500,
+            "tags": [
+                "qa"
+            ],
+            "text": "text",
+            "publishDate": "2026-02-06T07:22:49.371Z",
+            "updatedDate": "2026-02-06T07:22:49.371Z",
+            "owner": {
+                "id": "698596b7bd4aa5bbb8987883",
+                "firstName": "AlexTest1",
+                "lastName": "QAtest1"
+            }
+        },
+        {
+            "id": "69858633266b531ededb29d3",
+            "image": "https://randomuser.me/api/portraits/med/women/18.jpg",
+            "likes": 1000,
+            "tags": [
+                "qa"
+            ],
+            "text": "textalala",
+            "publishDate": "2026-02-06T06:12:03.677Z",
+            "updatedDate": "2026-02-06T06:12:03.677Z",
+            "owner": {
+                "id": "69858631fda019a7d9891f1f",
+                "firstName": "Derrick",
+                "lastName": "Rice"
+            }
+        },
+        {
+            "id": "698585c8266b531a3cdb29b4",
+            "image": "https://randomuser.me/api/portraits/med/women/18.jpg",
+            "likes": 1000,
+            "tags": [
+                "qa"
+            ],
+            "text": "textalala",
+            "publishDate": "2026-02-06T06:10:16.679Z",
+            "updatedDate": "2026-02-06T06:10:16.679Z",
+            "owner": {
+                "id": "698585c60a19838337ddd84d",
+                "firstName": "Wilbert",
+                "lastName": "White"
+            }
+        },
+        {
+            "id": "698584c95a754dc7d16c40c3",
+            "image": "https://randomuser.me/api/portraits/med/women/18.jpg",
+            "likes": 1000,
+            "tags": [
+                "qa"
+            ],
+            "text": "textalala",
+            "publishDate": "2026-02-06T06:06:01.959Z",
+            "updatedDate": "2026-02-06T06:06:01.959Z",
+            "owner": {
+                "id": "698584be5a754dd8256c40b9",
+                "firstName": "BananaTest",
+                "lastName": "MamaTest"
+            }
+        },
+        {
+            "id": "6985825c266b53b2f8db2921",
+            "image": "https://randomuser.me/api/portraits/med/women/18.jpg",
+            "likes": 1000,
+            "tags": [
+                "qa"
+            ],
+            "text": "textalala",
+            "publishDate": "2026-02-06T05:55:40.184Z",
+            "updatedDate": "2026-02-06T05:55:40.184Z",
+            "owner": {
+                "id": "698581bc5a754d4d3d6c4003",
+                "firstName": "Banana",
+                "lastName": "Mama"
+            }
+        }
+    ],
+    "total": 5238,
+    "page": 0,
+    "limit": 10
+}

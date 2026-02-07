@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "69864e864d8342ffdc14503d",
+            "message": "Auto comment 120b6be7",
+            "owner": {
+                "id": "69864e86ce2b886da9b6f019",
+                "firstName": "Scott",
+                "lastName": "Bond"
+            },
+            "post": "69864e86ce2b888231b6f01f",
+            "publishDate": "2026-02-06T20:26:46.984Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

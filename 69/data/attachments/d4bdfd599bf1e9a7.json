@@ -1,0 +1,118 @@
+{
+    "data": [
+        {
+            "id": "69873ab831527383898d45f9",
+            "message": "comment",
+            "owner": {
+                "id": "698731fbcf801d164e7c07b9",
+                "firstName": "Alex Brain",
+                "lastName": "QA Test",
+                "picture": "https://dummyimage.com/120x120/000/fff"
+            },
+            "post": "6987371dcf801d4fe57c07cc",
+            "publishDate": "2026-02-07T13:14:32.726Z"
+        },
+        {
+            "id": "6986d987d5442c3cefa9f9f7",
+            "message": "евреи",
+            "owner": {
+                "id": "6986d82f6bb40f5cab2d2ffe",
+                "firstName": "Alex",
+                "lastName": "QA"
+            },
+            "post": "6986d90e24003c733b31cd86",
+            "publishDate": "2026-02-07T06:19:51.173Z"
+        },
+        {
+            "id": "698629dd8ca1fd038656eece",
+            "message": "comment",
+            "owner": {
+                "id": "69862934e2788f62ea481315",
+                "firstName": "Noemi",
+                "lastName": "Spencer"
+            },
+            "post": "6986295ce2788fc502481321",
+            "publishDate": "2026-02-06T17:50:21.505Z"
+        },
+        {
+            "id": "698629d9c8fe09d4b90982c6",
+            "message": "",
+            "owner": {
+                "id": "69862934e2788f62ea481315",
+                "firstName": "Noemi",
+                "lastName": "Spencer"
+            },
+            "post": "6986295ce2788fc502481321",
+            "publishDate": "2026-02-06T17:50:17.725Z"
+        },
+        {
+            "id": "698629d5c8fe09be4e0982c0",
+            "message": "",
+            "owner": {
+                "id": "69862934e2788f62ea481315",
+                "firstName": "Noemi",
+                "lastName": "Spencer"
+            },
+            "post": "6986295ce2788fc502481321",
+            "publishDate": "2026-02-06T17:50:13.110Z"
+        },
+        {
+            "id": "698629ce8ca1fd54f656eec3",
+            "message": "",
+            "owner": {
+                "id": "69862934e2788f62ea481315",
+                "firstName": "Noemi",
+                "lastName": "Spencer"
+            },
+            "post": "6986295ce2788fc502481321",
+            "publishDate": "2026-02-06T17:50:06.790Z"
+        },
+        {
+            "id": "6985fcdae2788f1f39480b73",
+            "message": "oh, thats cool",
+            "owner": {
+                "id": "6985fb1e28181912e6e02560",
+                "firstName": "Pavel",
+                "lastName": "Madd"
+            },
+            "post": "6985fbf628181929f0e02566",
+            "publishDate": "2026-02-06T14:38:18.596Z"
+        },
+        {
+            "id": "698577485a754d30c96c3fd1",
+            "message": "ololocomment",
+            "owner": {
+                "id": "698576745a754d81386c3fc1",
+                "firstName": "Banana",
+                "lastName": "Mama"
+            },
+            "post": "698576e1266b539e20db28ee",
+            "publishDate": "2026-02-06T05:08:24.216Z"
+        },
+        {
+            "id": "6984cde372f3af3992f04b04",
+            "message": "labuba3",
+            "owner": {
+                "id": "6984ca82744e1318044b6045",
+                "firstName": "AlexTest1",
+                "lastName": "QAtest1"
+            },
+            "post": "6984cb1c744e1391544b604b",
+            "publishDate": "2026-02-05T17:05:39.122Z"
+        },
+        {
+            "id": "6982c614f1d772df6f4ead00",
+            "message": "commentik 999",
+            "owner": {
+                "id": "6982c472fb8cb16ea9f4c89f",
+                "firstName": "jeremys",
+                "lastName": "scottis"
+            },
+            "post": "6982c600fb8cb1b605f4c8ad",
+            "publishDate": "2026-02-04T04:07:48.467Z"
+        }
+    ],
+    "total": 1615,
+    "page": 0,
+    "limit": 10
+}

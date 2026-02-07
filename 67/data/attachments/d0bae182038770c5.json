@@ -1,0 +1,18 @@
+{
+    "method": "POST",
+    "url": "https://dummyapi.io/data/v1/comment/create",
+    "headers": {
+        "User-Agent": "python-requests/2.32.5",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "app-id": "***",
+        "Content-Type": "application/json",
+        "Content-Length": "109"
+    },
+    "body_json": {
+        "message": "Auto comment 7c981c84",
+        "owner": "698780d8d666b7524da79470",
+        "post": "698780d8c3be2d101ae8bb99"
+    }
+}

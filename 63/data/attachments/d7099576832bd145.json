@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "69864e755bddc8e4651364e5",
+            "message": "Auto comment 30e35dc6",
+            "owner": {
+                "id": "69864e745bddc82a741364df",
+                "firstName": "Cameron",
+                "lastName": "Holmes"
+            },
+            "post": "69864e754d8342773c144fd7",
+            "publishDate": "2026-02-06T20:26:29.221Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

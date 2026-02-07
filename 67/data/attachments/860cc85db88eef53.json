@@ -1,0 +1,12 @@
+{
+    "method": "GET",
+    "url": "https://dummyapi.io/data/v1/userzzz",
+    "headers": {
+        "User-Agent": "python-requests/2.32.5",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "app-id": "***"
+    },
+    "body": null
+}

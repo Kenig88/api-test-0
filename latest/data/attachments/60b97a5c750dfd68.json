@@ -1,0 +1,14 @@
+{
+    "method": "DELETE",
+    "url": "https://dummyapi.io/data/v1/user/698782afd666b7c8e3a7955f",
+    "headers": {
+        "User-Agent": "python-requests/2.32.5",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "app-id": "***",
+        "Content-Type": "application/json",
+        "Content-Length": "0"
+    },
+    "body": null
+}

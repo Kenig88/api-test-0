@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "69862113ce2b88a71db6e68a",
+            "message": "Auto comment 20060281",
+            "owner": {
+                "id": "698621128ca1fdedf156ee63",
+                "firstName": "Julie",
+                "lastName": "Phillips"
+            },
+            "post": "69862113ce2b882ceab6e684",
+            "publishDate": "2026-02-06T17:12:51.274Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

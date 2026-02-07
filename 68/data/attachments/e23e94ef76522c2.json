@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "6987815ac3be2dda93e8bbea",
+            "message": "Auto comment 9c06bdc4",
+            "owner": {
+                "id": "69878159d666b75859a794ef",
+                "firstName": "Thomas",
+                "lastName": "Taylor"
+            },
+            "post": "69878159d666b755b4a794f5",
+            "publishDate": "2026-02-07T18:15:54.227Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

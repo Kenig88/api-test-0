@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "698646f0d33fcb38320e5624",
+            "message": "Auto comment 948c546a",
+            "owner": {
+                "id": "698646efce2b88538eb6ec64",
+                "firstName": "Sara",
+                "lastName": "Strickland"
+            },
+            "post": "698646f05bddc82243136191",
+            "publishDate": "2026-02-06T19:54:24.289Z"
+        }
+    ],
+    "total": 1,
+    "page": 0,
+    "limit": 50
+}

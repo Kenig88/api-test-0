@@ -1,0 +1,15 @@
+{
+    "id": "69878225ebb92855d0f47b6c",
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+    "likes": 123,
+    "link": "",
+    "tags": [],
+    "text": "Updated post text",
+    "publishDate": "2026-02-07T18:19:17.396Z",
+    "updatedDate": "2026-02-07T18:19:17.526Z",
+    "owner": {
+        "id": "69878225c3be2d000ce8bc51",
+        "firstName": "Joseph",
+        "lastName": "Goodman"
+    }
+}
