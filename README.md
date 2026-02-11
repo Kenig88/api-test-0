@@ -1,114 +1,184 @@
-# -Тестовый пет-проект API-
+# -API Test Framework (pytest + requests + Allure)-
 
+
+Небольшой тестовый фреймворк для API-тестов на базе:
+- **pytest** — раннер и организация тестов
+- **requests** — HTTP-клиент
+- **pydantic v2** — валидация схем/ответов
+- **allure-pytest** — репортинг + attachments (запрос/ответ в отчёте)
+- **Docker / Docker Compose** — запуск тестовых наборов в контейнерах
+- **GitHub Actions** — запуск в CI + публикация Allure Report в GitHub Pages с историей
+
+Тестируемый API: **DummyAPI** (базовый URL вида `https://dummyapi.io/data/v1`). Авторизация через заголовок `app-id`.
+
+---
+
+## Быстрый старт
+
+### Требования:
+- Python **3.11+**
+- pip
+- Docker + Docker Compose
+- Allure CLI для локального просмотра HTML-отчёта
+
+### Установка зависимостей (локально):
+```bash
+python -m venv .venv
+# Windows:
+.venv\Scripts\activate
+# macOS/Linux:
+# source .venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+### Настройка окружения (.env):
+
+Создай файл .env на основе .env.example:
+
+.env.example:
+
+HOST=https://dummyapi.io/data/v1 \
+API_TOKEN=__YOUR__API__TOKEN__
+
+---
+
+## Запуск тестов локально через Pytest:
+
+Маркеры тестов определены в pytest.ini:
+* smoke — быстрые критичные проверки.
+* regression — полный регресс.
+* negative — негативные сценарии/ошибки.
+
+Запустить все тесты:
+- "pytest -sv"
+
+Запуск по маркерам:
+- "pytest -sv -m smoke"
+- "pytest -sv -m regression"
+- "pytest -sv -m negative"
+
+Сгенерировать Allure results:
+- pytest -sv --alluredir=allure-results --clean-alluredir
+
+---
 
 ## Собрать образ Docker:
 
 1. "docker compose build" \
 или
-2. "docker compose build --no-cache"    <--- если хочу пересобрать “с нуля” без кеша.
+2. "docker compose build --no-cache"    <--- если надо пересобрать “с нуля” без кеша.
 
-
-## Запуск тестов через Docker:
-
-Запустить smoke:
-* "docker compose run --rm smoke" 
-
-
-Запустить regression: 
-* "docker compose run --rm regression"
-
-
-Запустить negative:
-* "docker compose run --rm negative" 
-
+## Запуск тестов через Docker Compose:
 
 Запустить всё (all):
 * "docker compose run --rm all"
 
+Запустить smoke:
+* "docker compose run --rm smoke" 
+
+Запустить regression: 
+* "docker compose run --rm regression"
+
+Запустить negative:
+* "docker compose run --rm negative"
+
 ## Посмотреть историю Allure:
 "allure open allure-report"
 
-***
-***
-***
-***
-***
+---
 
+## CI: GitHub Actions + Allure Report в GitHub Pages:
+
+В проекте настроен workflow: .github/workflows/api-tests-docker.yml.
+
+Как включить:
+
+1. GitHub → Settings → Secrets and variables → Actions → Secrets добавь:
+
+2. HOST (например, https://dummyapi.io/data/v1)
+
+3. API_TOKEN (твой app-id)
+
+4. GitHub → Settings → Pages:
+
+5. Source: Deploy from a branch
+
+6. Branch: gh-pages
+
+7. Folder: /(root)
+
+Как запустить:
+
+1. Actions → API tests (Docker + Allure) → Run workflow
+
+2. Выбери suite: all / smoke / regression / negative
+
+Где смотреть отчёт:
+
+1. Workflow публикует отчёт в GitHub Pages:
+
+2. .../latest/ — всегда свежий отчёт (алиас)
+
+3. .../<run_number>/ — отчёт конкретного прогона
+
+---
+
+## Структура проекта:
+
+```text
+api-test-0/
+  config/
+    base_test.py               # базовый класс тестов (доступ к API клиентам)
+  services/
+    users/                     # endpoints/payloads/models + client UsersAPI
+    posts/                     # endpoints/payloads/models + client PostsAPI
+    comments/                  # endpoints/payloads/models + client CommentsAPI
+  tests/
+    conftest.py                # фикстуры, сессия, фабрики (создание/cleanup сущностей)
+    users/                     # тесты пользователей
+    posts/                     # тесты постов
+    comments/                  # тесты комментариев
+  utils/
+    raw_http.py                # "сырой" HTTP клиент для негативных проверок
+    assertions.py              # проверки статусов/JSON
+    helper.py                  # вспомогательные функции (Allure attachments и т.п.)
+  docker-compose.yml           # сервисы all/smoke/regression/negative
+  Dockerfile                   # окружение для запуска тестов
+  requirements.txt
+  pytest.ini
+  .env.example
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/Kenig88/api-test.git
-git branch -M main
-git push -uf origin main
-```
 
-## Integrate with your tools
+---
 
-* [Set up project integrations](https://gitlab.com/Kenig88/api-test/-/settings/integrations)
+## Как устроен подход к API:
 
-## Collaborate with your team
+В клиентах (services/*/api_*.py) используется подход из двух уровней:
 
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+* Raw response методы - возвращают requests.Response. Полезно, когда нужно вручную проверить тело/заголовки/ошибки.
 
-## Test and Deploy
+* Checked методы - проверяют статус-код, валидируют JSON, возвращают Pydantic-модель или словарь.
 
-Use the built-in continuous integration in GitLab.
+Для негативных сценариев используется utils/raw_http.py — это позволяет делать запросы без app-id или с “ломаными” заголовками и проверять ошибки API.
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+---
 
-***
+## Диагностика проблем: 
 
-# Editing this README
+* 403 / Unauthorized / app-id missing:
+Проверь: 
+1. API_TOKEN корректный.
+2. env лежит в корне проекта и содержит актуальные значения.
+3. в CI секреты HOST и API_TOKEN добавлены.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+* Нет allure-results/: \
+Запускай так -> "pytest --alluredir=allure-results --clean-alluredir"
 
-## Suggestions for a good README
+* Docker Compose ругается на переменные: \
+Убедись, что переменные определены, в .env (в корне проекта) или экспортированы в окружение (HOST/API_TOKEN).
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+* Безопасность:
+1. Никогда не коммить .env (секреты).
+2. Если токен “засветился” — сразу перевыпусти (rotate).
+3. Не добавляй в репо .venv/, .git/, .idea/, __pycache__/, .pytest_cache/.

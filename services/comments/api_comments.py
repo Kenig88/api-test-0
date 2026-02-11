@@ -2,7 +2,7 @@ import allure
 import requests
 from services.comments.comment_endpoints import CommentEndpoints
 from services.comments.comment_payloads import CommentPayloads
-from services.comments.comments_model import CommentModel
+from services.comments.comment_model import CommentModel
 from utils.helper import Helper
 
 
